@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -38,10 +39,12 @@ public class BuyerApiRequest {
 
     private String address;
 
-    private Set<String> job;
-
-    private BigDecimal annualIncome;
+    private Set<String> jobs;
 
     private String cryptoWallet;
+
+    private String verifyImageName;
+
+    private String profileImageName;
 
 }

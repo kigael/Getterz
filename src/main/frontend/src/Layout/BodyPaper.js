@@ -2,12 +2,15 @@ import React from "react";
 import { makeStyles, Paper, Grid } from "@material-ui/core";
 import GateWallpaper from "../img/gate-wallpaper.png";
 import BuyerGateWallpaper from "../img/buyer-gate-wallpaper.jpg";
+import AdminGateWallpaper from "../img/admin-gate-wallpaper.jpg";
 
 const useStyles = makeStyles((theme) => ({
   wallpaper: (props) => ({
     backgroundImage:
       props.Type === "Buyer"
         ? `url(${BuyerGateWallpaper})`
+        : props.Type === "Admin"
+        ? `url(${AdminGateWallpaper})`
         : `url(${GateWallpaper})`,
     width: "100%",
     height: "100%",

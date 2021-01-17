@@ -45,11 +45,11 @@ public class SellerApiResponse {
 
     private List<ProductApiResponse> products;
 
-    private String cryptoWallet;
+    private String backAccount;
 
     private BigDecimal fee;
 
-    private BigDecimal sold;
+    private BigDecimal soldAmount;
 
     private List<PurchaseApiResponse> orders;
 

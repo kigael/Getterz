@@ -22,8 +22,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\";"
             , nativeQuery = true)
@@ -31,7 +30,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("productName")String productName,
             Pageable pageable);
 
@@ -42,8 +40,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     ":minimumCost <= cost;"
@@ -52,7 +49,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("productName")String productName,
             @Param("minimumCost")BigDecimal minimumCost,
             Pageable pageable);
@@ -64,8 +60,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     ":maximumCost >= cost;"
@@ -74,7 +69,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("productName")String productName,
             @Param("maximumCost")BigDecimal maximumCost,
             Pageable pageable);
@@ -86,8 +80,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     "cost BETWEEN :minimumCost AND :maximumCost;"
@@ -96,7 +89,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("productName")String productName,
             @Param("minimumCost")BigDecimal minimumCost,
             @Param("maximumCost")BigDecimal maximumCost,
@@ -109,8 +101,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     "(SELECT COUNT(*) FROM product_tags, tag WHERE id = product_id AND tags_id = tag.id AND \"%\" + tag.name + \"%\" IN :tags) >= :numberOfTags;"
@@ -119,7 +110,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("productName")String productName,
             @Param("tags")Set<String> tags,
             @Param("numberOfTags")Integer numberOfTags,
@@ -132,8 +122,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     ":minimumCost <= cost AND " +
@@ -143,7 +132,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("productName")String productName,
             @Param("minimumCost")BigDecimal minimumCost,
             @Param("tags")Set<String> tags,
@@ -157,8 +145,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     ":maximumCost >= cost AND " +
@@ -168,7 +155,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("productName")String productName,
             @Param("maximumCost")BigDecimal maximumCost,
             @Param("tags")Set<String> tags,
@@ -182,8 +168,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     "cost BETWEEN :minimumCost AND :maximumCost AND " +
@@ -193,7 +178,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("productName")String productName,
             @Param("minimumCost")BigDecimal minimumCost,
             @Param("maximumCost")BigDecimal maximumCost,
@@ -208,8 +192,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" " +
                     "ORDER BY (SELECT ST_DISTANCE_SPHERE((SELECT POINT(latitude, longitude) FROM seller WHERE seller.id=seller_id), POINT(:latitude, :longitude)));"
@@ -218,7 +201,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("latitude")Double latitude,
             @Param("longitude")Double longitude,
             @Param("productName")String productName,
@@ -231,8 +213,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" " +
                     "ORDER BY (SELECT ST_DISTANCE_SPHERE((SELECT POINT(latitude, longitude) FROM seller WHERE seller.id=seller_id), POINT(:latitude, :longitude))) DESC;"
@@ -241,7 +222,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("latitude")Double latitude,
             @Param("longitude")Double longitude,
             @Param("productName")String productName,
@@ -254,8 +234,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     ":minimumCost <= cost " +
@@ -265,7 +244,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("latitude")Double latitude,
             @Param("longitude")Double longitude,
             @Param("productName")String productName,
@@ -279,8 +257,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     ":minimumCost <= cost " +
@@ -290,7 +267,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("latitude")Double latitude,
             @Param("longitude")Double longitude,
             @Param("productName")String productName,
@@ -304,8 +280,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     ":maximumCost >= cost " +
@@ -315,7 +290,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("latitude")Double latitude,
             @Param("longitude")Double longitude,
             @Param("productName")String productName,
@@ -329,8 +303,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     ":maximumCost >= cost " +
@@ -340,7 +313,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("latitude")Double latitude,
             @Param("longitude")Double longitude,
             @Param("productName")String productName,
@@ -354,8 +326,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     "cost BETWEEN :minimumCost AND :maximumCost " +
@@ -365,7 +336,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("latitude")Double latitude,
             @Param("longitude")Double longitude,
             @Param("productName")String productName,
@@ -380,8 +350,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     "cost BETWEEN :minimumCost AND :maximumCost " +
@@ -391,7 +360,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("latitude")Double latitude,
             @Param("longitude")Double longitude,
             @Param("productName")String productName,
@@ -406,8 +374,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     "(SELECT COUNT(*) FROM product_tags, tag WHERE id = product_id AND tags_id = tag.id AND \"%\" + tag.name + \"%\" IN :tags) >= :numberOfTags " +
@@ -417,7 +384,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("latitude")Double latitude,
             @Param("longitude")Double longitude,
             @Param("productName")String productName,
@@ -432,8 +398,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     "(SELECT COUNT(*) FROM product_tags, tag WHERE id = product_id AND tags_id = tag.id AND \"%\" + tag.name + \"%\" IN :tags) >= :numberOfTags " +
@@ -443,7 +408,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("latitude")Double latitude,
             @Param("longitude")Double longitude,
             @Param("productName")String productName,
@@ -458,8 +422,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     ":minimumCost <= cost AND " +
@@ -470,7 +433,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("latitude")Double latitude,
             @Param("longitude")Double longitude,
             @Param("productName")String productName,
@@ -486,8 +448,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     ":minimumCost <= cost AND " +
@@ -498,7 +459,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("latitude")Double latitude,
             @Param("longitude")Double longitude,
             @Param("productName")String productName,
@@ -514,8 +474,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     ":maximumCost >= cost AND " +
@@ -526,7 +485,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("latitude")Double latitude,
             @Param("longitude")Double longitude,
             @Param("productName")String productName,
@@ -542,8 +500,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     ":maximumCost >= cost AND " +
@@ -554,7 +511,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("latitude")Double latitude,
             @Param("longitude")Double longitude,
             @Param("productName")String productName,
@@ -570,8 +526,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     "cost BETWEEN :minimumCost AND :maximumCost AND " +
@@ -582,7 +537,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("latitude")Double latitude,
             @Param("longitude")Double longitude,
             @Param("productName")String productName,
@@ -599,8 +553,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     "cost BETWEEN :minimumCost AND :maximumCost AND " +
@@ -611,7 +564,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("latitude")Double latitude,
             @Param("longitude")Double longitude,
             @Param("productName")String productName,
@@ -628,8 +580,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" " +
                     "ORDER BY cost;"
@@ -638,7 +589,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("productName")String productName,
             Pageable pageable);
 
@@ -649,8 +599,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" " +
                     "ORDER BY cost DESC;"
@@ -659,7 +608,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("productName")String productName,
             Pageable pageable);
 
@@ -670,8 +618,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     ":minimumCost <= cost " +
@@ -681,7 +628,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("productName")String productName,
             @Param("minimumCost") BigDecimal minimumCost,
             Pageable pageable);
@@ -693,8 +639,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     ":minimumCost <= cost " +
@@ -704,7 +649,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("productName")String productName,
             @Param("minimumCost") BigDecimal minimumCost,
             Pageable pageable);
@@ -716,8 +660,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     ":maximumCost >= cost " +
@@ -727,7 +670,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("productName")String productName,
             @Param("maximumCost") BigDecimal maximumCost,
             Pageable pageable);
@@ -739,8 +681,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     ":maximumCost >= cost " +
@@ -750,7 +691,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("productName")String productName,
             @Param("maximumCost") BigDecimal maximumCost,
             Pageable pageable);
@@ -762,8 +702,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     "cost BETWEEN :minimumCost AND :maximumCost " +
@@ -773,7 +712,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("productName")String productName,
             @Param("minimumCost")BigDecimal minimumCost,
             @Param("maximumCost")BigDecimal maximumCost,
@@ -786,8 +724,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     "cost BETWEEN :minimumCost AND :maximumCost " +
@@ -797,7 +734,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("productName")String productName,
             @Param("minimumCost")BigDecimal minimumCost,
             @Param("maximumCost")BigDecimal maximumCost,
@@ -810,8 +746,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     "(SELECT COUNT(*) FROM product_tags, tag WHERE id = product_id AND tags_id = tag.id AND \"%\" + tag.name + \"%\" IN :tags) >= :numberOfTags " +
@@ -821,7 +756,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("productName")String productName,
             @Param("tags")Set<String> tags,
             @Param("numberOfTags")Integer numberOfTags,
@@ -834,8 +768,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     "(SELECT COUNT(*) FROM product_tags, tag WHERE id = product_id AND tags_id = tag.id AND \"%\" + tag.name + \"%\" IN :tags) >= :numberOfTags " +
@@ -845,7 +778,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("productName")String productName,
             @Param("tags")Set<String> tags,
             @Param("numberOfTags")Integer numberOfTags,
@@ -858,8 +790,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     ":minimumCost <= cost AND " +
@@ -870,7 +801,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("productName")String productName,
             @Param("minimumCost")BigDecimal minimumCost,
             @Param("tags")Set<String> tags,
@@ -884,8 +814,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     ":minimumCost <= cost AND " +
@@ -896,7 +825,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("productName")String productName,
             @Param("minimumCost")BigDecimal minimumCost,
             @Param("tags")Set<String> tags,
@@ -910,8 +838,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     ":maximumCost >= cost AND " +
@@ -922,7 +849,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("productName")String productName,
             @Param("maximumCost")BigDecimal maximumCost,
             @Param("tags")Set<String> tags,
@@ -936,8 +862,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     ":maximumCost >= cost AND " +
@@ -948,7 +873,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("productName")String productName,
             @Param("maximumCost")BigDecimal maximumCost,
             @Param("tags")Set<String> tags,
@@ -962,8 +886,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     "cost BETWEEN :minimumCost AND :maximumCost AND " +
@@ -974,7 +897,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("productName")String productName,
             @Param("minimumCost")BigDecimal minimumCost,
             @Param("maximumCost")BigDecimal maximumCost,
@@ -989,8 +911,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     "cost BETWEEN :minimumCost AND :maximumCost AND " +
@@ -1001,7 +922,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("productName")String productName,
             @Param("minimumCost")BigDecimal minimumCost,
             @Param("maximumCost")BigDecimal maximumCost,
@@ -1016,8 +936,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" " +
                     "ORDER BY (SELECT COUNT(*) FROM review WHERE product_id = id AND purchase_result = \"SUCCESS\");"
@@ -1026,7 +945,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("productName")String productName,
             Pageable pageable);
 
@@ -1037,8 +955,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" " +
                     "ORDER BY (SELECT COUNT(*) FROM review WHERE product_id = id AND purchase_result = \"SUCCESS\") DESC;"
@@ -1047,7 +964,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("productName")String productName,
             Pageable pageable);
 
@@ -1058,8 +974,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     ":minimumCost <= cost " +
@@ -1069,7 +984,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("productName")String productName,
             @Param("minimumCost")BigDecimal minimumCost,
             Pageable pageable);
@@ -1081,8 +995,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     ":minimumCost <= cost " +
@@ -1092,7 +1005,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("productName")String productName,
             @Param("minimumCost")BigDecimal minimumCost,
             Pageable pageable);
@@ -1104,8 +1016,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     ":maximumCost >= cost " +
@@ -1115,7 +1026,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("productName")String productName,
             @Param("maximumCost")BigDecimal maximumCost,
             Pageable pageable);
@@ -1127,8 +1037,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     ":maximumCost >= cost " +
@@ -1138,7 +1047,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("productName")String productName,
             @Param("maximumCost")BigDecimal maximumCost,
             Pageable pageable);
@@ -1150,8 +1058,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     "cost BETWEEN :minimumCost AND :maximumCost " +
@@ -1161,7 +1068,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("productName")String productName,
             @Param("minimumCost")BigDecimal minimumCost,
             @Param("maximumCost")BigDecimal maximumCost,
@@ -1174,8 +1080,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     "cost BETWEEN :minimumCost AND :maximumCost " +
@@ -1185,7 +1090,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("productName")String productName,
             @Param("minimumCost")BigDecimal minimumCost,
             @Param("maximumCost")BigDecimal maximumCost,
@@ -1198,8 +1102,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     "(SELECT COUNT(*) FROM product_tags, tag WHERE id = product_id AND tags_id = tag.id AND \"%\" + tag.name + \"%\" IN :tags) >= :numberOfTags " +
@@ -1209,7 +1112,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("productName")String productName,
             @Param("tags")Set<String> tags,
             @Param("numberOfTags")Integer numberOfTags,
@@ -1222,8 +1124,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     "(SELECT COUNT(*) FROM product_tags, tag WHERE id = product_id AND tags_id = tag.id AND \"%\" + tag.name + \"%\" IN :tags) >= :numberOfTags " +
@@ -1233,7 +1134,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("productName")String productName,
             @Param("tags")Set<String> tags,
             @Param("numberOfTags")Integer numberOfTags,
@@ -1246,8 +1146,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     ":minimumCost <= cost AND " +
@@ -1258,7 +1157,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("productName")String productName,
             @Param("minimumCost")BigDecimal minimumCost,
             @Param("tags")Set<String> tags,
@@ -1272,8 +1170,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     ":minimumCost <= cost AND " +
@@ -1284,7 +1181,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("productName")String productName,
             @Param("minimumCost")BigDecimal minimumCost,
             @Param("tags")Set<String> tags,
@@ -1298,8 +1194,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     ":maximumCost >= cost AND " +
@@ -1310,7 +1205,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("productName")String productName,
             @Param("maximumCost")BigDecimal maximumCost,
             @Param("tags")Set<String> tags,
@@ -1324,8 +1218,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     ":maximumCost >= cost AND " +
@@ -1336,7 +1229,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("productName")String productName,
             @Param("maximumCost")BigDecimal maximumCost,
             @Param("tags")Set<String> tags,
@@ -1350,8 +1242,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     "cost BETWEEN :minimumCost AND :maximumCost AND " +
@@ -1362,7 +1253,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("productName")String productName,
             @Param("minimumCost")BigDecimal minimumCost,
             @Param("maximumCost")BigDecimal maximumCost,
@@ -1377,8 +1267,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "WHERE allowed_gender LIKE \"%:gender%\" AND " +
                     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
                     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
-                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) AND " +
-                    ":annualIncome BETWEEN allowed_minimum_annual_income AND allowed_maximum_annual_income OR " +
+                    "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
                     "expose_to_no_qualify AND " +
                     "name LIKE \"%:productName%\" AND " +
                     "cost BETWEEN :minimumCost AND :maximumCost AND " +
@@ -1389,7 +1278,6 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("gender")String gender,
             @Param("age")Integer age,
             @Param("jobs")List<Long> jobs,
-            @Param("annualIncome")BigDecimal annualIncome,
             @Param("productName")String productName,
             @Param("minimumCost")BigDecimal minimumCost,
             @Param("maximumCost")BigDecimal maximumCost,

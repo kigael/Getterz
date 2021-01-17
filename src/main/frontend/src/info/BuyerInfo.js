@@ -26,10 +26,10 @@ const initialState = {
       longitude: null,
       address: null,
       job: [],
-      annualIncome: null,
       cryptoWallet: null,
-      orders: [],
+      purchases: [],
       reviews: [],
+      profileImageName: null,
     },
     session: null,
   },
@@ -54,10 +54,11 @@ export default function BuyerInfo(state = initialState, action) {
         draft.header.data.longitude = action.header.data.longitude;
         draft.header.data.address = action.header.data.address;
         draft.header.data.job = action.header.data.job;
-        draft.header.data.annualIncome = action.header.data.annualIncome;
         draft.header.data.cryptoWallet = action.header.data.cryptoWallet;
-        draft.header.data.orders = action.header.data.orders;
+        draft.header.data.purchases = action.header.data.purchases;
         draft.header.data.reviews = action.header.data.reviews;
+        draft.header.data.profileImageName =
+          action.header.data.profileImageName;
         draft.header.session = action.header.session;
       });
     case BUYER_LOGOUT:
@@ -75,10 +76,10 @@ export default function BuyerInfo(state = initialState, action) {
         draft.header.data.longitude = null;
         draft.header.data.address = null;
         draft.header.data.job = [];
-        draft.header.data.annualIncome = null;
         draft.header.data.cryptoWallet = null;
-        draft.header.data.orders = [];
+        draft.header.data.purchases = [];
         draft.header.data.reviews = [];
+        draft.header.data.profileImageName = null;
         draft.header.session = null;
       });
     case BUYER_LOADING:

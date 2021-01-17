@@ -17,9 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -78,14 +76,6 @@ public class ProductApiLogicService extends CrudService<ProductApiRequest, Produ
                 description.append("NO JOB CONDITION\n");
                 isGreen=Boolean.FALSE;
             }
-            if(body.getAllowedMinimumAnnualIncome()==null){
-                description.append("NO ALLOWED MINIMUM ANNUAL INCOME\n");
-                isGreen=Boolean.FALSE;
-            }
-            if(body.getAllowedMaximumAnnualIncome()==null){
-                description.append("NO ALLOWED MAXIMUM ANNUAL INCOME\n");
-                isGreen=Boolean.FALSE;
-            }
             if(body.getExposeToNoQualify()==null){
                 description.append("NO EXPOSE TO NO QUALIFY\n");
                 isGreen=Boolean.FALSE;
@@ -122,20 +112,14 @@ public class ProductApiLogicService extends CrudService<ProductApiRequest, Produ
 
                 if(body.getAllowedJob().size()>0 && body.getBannedJob().size()>0) return Header.ERROR(transactionType,"INVALID JOB CONDITION",SessionApi.updateSession(request.getSession()));
 
-                if(body.getAllowedMinimumAnnualIncome().compareTo(BigDecimal.ZERO)<0) return Header.ERROR(transactionType,"INVALID ANNUAL MINIMUM INCOME",SessionApi.updateSession(request.getSession()));
-
-                if(body.getAllowedMaximumAnnualIncome().compareTo(BigDecimal.ONE)<0) return Header.ERROR(transactionType,"INVALID ANNUAL MAXIMUM INCOME",SessionApi.updateSession(request.getSession()));
-
-                if(body.getAllowedMinimumAnnualIncome().compareTo(body.getAllowedMaximumAnnualIncome())>=0) return Header.ERROR(transactionType,"INVALID ANNUAL INCOME RANGE",SessionApi.updateSession(request.getSession()));
-
-                List<Tag> tags = new ArrayList<>();
+                Set<Tag> tags = new HashSet<>();
                 for(String tagName : body.getTags()) tags.add(tagRepository.findByName(tagName).orElse(tagRepository.save(Tag.builder().name(tagName).build())));
 
-                List<Job> allowedJobs = new ArrayList<>();
-                for(String jobName : body.getAllowedJob()) allowedJobs.add(jobRepository.findByName(jobName).orElse(jobRepository.save(Job.builder().name(jobName).build())));
+                Set<Job> allowedJobs = new HashSet<>();
+                for(String jobName : body.getAllowedJob()) allowedJobs.add(jobRepository.findFirstByName(jobName).orElse(jobRepository.save(Job.builder().name(jobName).build())));
 
-                List<Job> bannedJobs = new ArrayList<>();
-                for(String jobName : body.getBannedJob()) allowedJobs.add(jobRepository.findByName(jobName).orElse(jobRepository.save(Job.builder().name(jobName).build())));
+                Set<Job> bannedJobs = new HashSet<>();
+                for(String jobName : body.getBannedJob()) allowedJobs.add(jobRepository.findFirstByName(jobName).orElse(jobRepository.save(Job.builder().name(jobName).build())));
 
                 return Header.OK(
                         transactionType,
@@ -150,8 +134,6 @@ public class ProductApiLogicService extends CrudService<ProductApiRequest, Produ
                         .allowedMaximumAge(body.getAllowedMaximumAge())
                         .allowedJobs(allowedJobs)
                         .bannedJobs(bannedJobs)
-                        .allowedMinimumAnnualIncome(body.getAllowedMinimumAnnualIncome())
-                        .allowedMaximumAnnualIncome(body.getAllowedMaximumAnnualIncome())
                         .exposeToNoQualify(body.getExposeToNoQualify())
                         .build())),
                         SessionApi.updateSession(request.getSession()));
@@ -236,14 +218,6 @@ public class ProductApiLogicService extends CrudService<ProductApiRequest, Produ
                 description.append("NO JOB CONDITION\n");
                 isGreen=Boolean.FALSE;
             }
-            if(body.getAllowedMinimumAnnualIncome()==null){
-                description.append("NO ALLOWED MINIMUM ANNUAL INCOME\n");
-                isGreen=Boolean.FALSE;
-            }
-            if(body.getAllowedMaximumAnnualIncome()==null){
-                description.append("NO ALLOWED MAXIMUM ANNUAL INCOME\n");
-                isGreen=Boolean.FALSE;
-            }
             if(body.getExposeToNoQualify()==null){
                 description.append("NO EXPOSE TO NO QUALIFY\n");
                 isGreen=Boolean.FALSE;
@@ -279,20 +253,14 @@ public class ProductApiLogicService extends CrudService<ProductApiRequest, Produ
 
                 if(body.getAllowedJob().size()>0 && body.getBannedJob().size()>0) return Header.ERROR(transactionType,"INVALID JOB CONDITION",SessionApi.updateSession(request.getSession()));
 
-                if(body.getAllowedMinimumAnnualIncome().compareTo(BigDecimal.ZERO)<0) return Header.ERROR(transactionType,"INVALID ANNUAL MINIMUM INCOME",SessionApi.updateSession(request.getSession()));
-
-                if(body.getAllowedMaximumAnnualIncome().compareTo(BigDecimal.ONE)<0) return Header.ERROR(transactionType,"INVALID ANNUAL MAXIMUM INCOME",SessionApi.updateSession(request.getSession()));
-
-                if(body.getAllowedMinimumAnnualIncome().compareTo(body.getAllowedMaximumAnnualIncome())>=0) return Header.ERROR(transactionType,"INVALID ANNUAL INCOME RANGE",SessionApi.updateSession(request.getSession()));
-
-                List<Tag> tags = new ArrayList<>();
+                Set<Tag> tags = new HashSet<>();
                 for(String tagName : body.getTags()) tags.add(tagRepository.findByName(tagName).orElse(tagRepository.save(Tag.builder().name(tagName).build())));
 
-                List<Job> allowedJobs = new ArrayList<>();
-                for(String jobName : body.getAllowedJob()) allowedJobs.add(jobRepository.findByName(jobName).orElse(jobRepository.save(Job.builder().name(jobName).build())));
+                Set<Job> allowedJobs = new HashSet<>();
+                for(String jobName : body.getAllowedJob()) allowedJobs.add(jobRepository.findFirstByName(jobName).orElse(jobRepository.save(Job.builder().name(jobName).build())));
 
-                List<Job> bannedJobs = new ArrayList<>();
-                for(String jobName : body.getBannedJob()) allowedJobs.add(jobRepository.findByName(jobName).orElse(jobRepository.save(Job.builder().name(jobName).build())));
+                Set<Job> bannedJobs = new HashSet<>();
+                for(String jobName : body.getBannedJob()) allowedJobs.add(jobRepository.findFirstByName(jobName).orElse(jobRepository.save(Job.builder().name(jobName).build())));
 
                 return Header.OK(
                         transactionType,
@@ -307,8 +275,6 @@ public class ProductApiLogicService extends CrudService<ProductApiRequest, Produ
                         .setAllowedMaximumAge(body.getAllowedMaximumAge())
                         .setAllowedJobs(allowedJobs)
                         .setBannedJobs(bannedJobs)
-                        .setAllowedMinimumAnnualIncome(body.getAllowedMinimumAnnualIncome())
-                        .setAllowedMaximumAnnualIncome(body.getAllowedMaximumAnnualIncome())
                         .setExposeToNoQualify(body.getExposeToNoQualify()))),
                         SessionApi.updateSession(request.getSession()));
             }
@@ -355,8 +321,6 @@ public class ProductApiLogicService extends CrudService<ProductApiRequest, Produ
                 .allowedGender(DtoConverter.stringToSetOfGender(product.getAllowedGender()))
                 .allowedMinimumAge(product.getAllowedMinimumAge())
                 .allowedMaximumAge(product.getAllowedMaximumAge())
-                .allowedMinimumAnnualIncome(product.getAllowedMinimumAnnualIncome())
-                .allowedMaximumAnnualIncome(product.getAllowedMaximumAnnualIncome())
                 .exposeToNoQualify(product.getExposeToNoQualify())
                 .build();
         if(product.getSeller()!=null) body.setSeller(SellerApiLogicService.Body(product.getSeller()));
@@ -394,8 +358,6 @@ public class ProductApiLogicService extends CrudService<ProductApiRequest, Produ
                 .allowedGender(DtoConverter.stringToSetOfGender(product.getAllowedGender()))
                 .allowedMinimumAge(product.getAllowedMinimumAge())
                 .allowedMaximumAge(product.getAllowedMaximumAge())
-                .allowedMinimumAnnualIncome(product.getAllowedMinimumAnnualIncome())
-                .allowedMaximumAnnualIncome(product.getAllowedMaximumAnnualIncome())
                 .exposeToNoQualify(product.getExposeToNoQualify())
                 .build();
     }

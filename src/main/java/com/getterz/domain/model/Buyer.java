@@ -1,24 +1,29 @@
 package com.getterz.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.getterz.domain.enumclass.Gender;
 import lombok.*;
 import lombok.experimental.Accessors;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = {"purchases","reviews"})
+@ToString(exclude = {"jobs","purchases","reviews"})
 @Builder
 @Accessors(chain = true)
+@JsonIgnoreProperties(value= {"jobs","purchases","reviews"})
 public class Buyer {
 
     @Id
@@ -44,6 +49,8 @@ public class Buyer {
 
     private String emailAddress;                        // ENCRYPT
 
+    private Boolean emailCertified;
+
     private String cellNumber;                          // ENCRYPT
 
     private Double latitude;
@@ -52,21 +59,21 @@ public class Buyer {
 
     private String address;                             // ENCRYPT
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private List<Job> job;
-
-    private BigDecimal annualIncome;
+    @ManyToMany(fetch = FetchType.LAZY)
+    private Set<Job> jobs;
 
     private String cryptoWallet;                        // ENCRYPT
 
-    private BigDecimal bought;
-
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "buyer")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "buyer")
     private List<Purchase> purchases;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "buyer")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "buyer")
     private List<Review> reviews;
 
     private Boolean adminCertified;
+
+    private String verifyImageName;
+
+    private String profileImageName;
 
 }

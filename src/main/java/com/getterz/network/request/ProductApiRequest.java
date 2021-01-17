@@ -37,10 +37,6 @@ public class ProductApiRequest {
 
     private Set<String> bannedJob;
 
-    private BigDecimal allowedMinimumAnnualIncome;
-
-    private BigDecimal allowedMaximumAnnualIncome;
-
     private Boolean exposeToNoQualify;
 
     private String description;

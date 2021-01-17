@@ -45,10 +45,6 @@ public class ProductApiResponse {
 
     private List<JobApiResponse> bannedJobs;
 
-    private BigDecimal allowedMinimumAnnualIncome;
-
-    private BigDecimal allowedMaximumAnnualIncome;
-
     private Boolean exposeToNoQualify;
 
     private String description;

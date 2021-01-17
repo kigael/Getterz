@@ -23,6 +23,8 @@ const useStyles = makeStyles((theme) => ({
           ? theme.palette.primary.main
           : props.Type === "Seller"
           ? theme.palette.success.main
+          : props.Type === "Admin"
+          ? theme.palette.warning.main
           : theme.palette.secondary.main,
       position: "static",
     };
@@ -45,14 +47,21 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function HeadBar(props) {
-  const { sellerLoading, sellerData, buyerLoading, buyerData } = useSelector(
-    (state) => ({
-      sellerLoading: state.SellerInfo.loading,
-      sellerData: state.SellerInfo.header.data,
-      buyerLoading: state.BuyerInfo.loading,
-      buyerData: state.BuyerInfo.header.data,
-    })
-  );
+  const {
+    adminLoading,
+    adminData,
+    sellerLoading,
+    sellerData,
+    buyerLoading,
+    buyerData,
+  } = useSelector((state) => ({
+    adminLoading: state.AdminInfo.loading,
+    adminData: state.AdminInfo.header.data,
+    sellerLoading: state.SellerInfo.loading,
+    sellerData: state.SellerInfo.header.data,
+    buyerLoading: state.BuyerInfo.loading,
+    buyerData: state.BuyerInfo.header.data,
+  }));
   const classes = useStyles(props);
   return (
     <div>
@@ -65,7 +74,7 @@ export default function HeadBar(props) {
           alignItems="center"
           justify="center"
         >
-          <Grid item xs={12} sm={3} justify="center">
+          <Grid item xs={3} justify="center">
             <Link
               to={props.Type ? "/" + props.Type : "/"}
               style={{ color: "inherit", textDecoration: "inherit" }}
@@ -75,16 +84,13 @@ export default function HeadBar(props) {
               </Typography>
             </Link>
           </Grid>
-          {props.Type === "Seller" ? (
-            <div>asd</div>
-          ) : props.Type === "Buyer" ? (
+          {props.Type === "Admin" ? (
             <>
-              <Grid item xs={0} sm={5} />
+              <Grid item xs={5} />
               <Grid
                 container
                 item
-                xs={12}
-                sm={4}
+                xs={4}
                 direction="row"
                 justify="space-evenly"
               >
@@ -92,7 +98,88 @@ export default function HeadBar(props) {
                   item
                   container
                   xs={1}
-                  sm={1}
+                  direction="column"
+                  alignItems="flex-start"
+                >
+                  <Link
+                    to="/admin/buyer_verify"
+                    style={{ color: "inherit", textDecoration: "inherit" }}
+                  >
+                    <Typography variant="h5" className={classes.option}>
+                      <SearchIcon />
+                      Buyer verify
+                    </Typography>
+                  </Link>
+                </Grid>
+                <Grid
+                  item
+                  container
+                  xs={1}
+                  direction="column"
+                  alignItems="flex-start"
+                >
+                  <Link
+                    to="/admin/seller_verify"
+                    style={{ color: "inherit", textDecoration: "inherit" }}
+                  >
+                    <Typography variant="h5" className={classes.option}>
+                      <SearchIcon />
+                      Seller verify
+                    </Typography>
+                  </Link>
+                </Grid>
+                <Grid
+                  item
+                  container
+                  xs={1}
+                  direction="column"
+                  alignItems="flex-start"
+                >
+                  <Link
+                    to="/admin/buyer_refund"
+                    style={{ color: "inherit", textDecoration: "inherit" }}
+                  >
+                    <Typography variant="h5" className={classes.option}>
+                      <SearchIcon />
+                      Buyer refund
+                    </Typography>
+                  </Link>
+                </Grid>
+                <Grid
+                  item
+                  container
+                  xs={1}
+                  direction="column"
+                  alignItems="flex-start"
+                >
+                  <Link
+                    to="/admin/seller_withdraw"
+                    style={{ color: "inherit", textDecoration: "inherit" }}
+                  >
+                    <Typography variant="h5" className={classes.option}>
+                      <SearchIcon />
+                      Seller withdraw
+                    </Typography>
+                  </Link>
+                </Grid>
+              </Grid>
+            </>
+          ) : props.Type === "Seller" ? (
+            <div>asd</div>
+          ) : props.Type === "Buyer" ? (
+            <>
+              <Grid item xs={5} />
+              <Grid
+                container
+                item
+                xs={4}
+                direction="row"
+                justify="space-evenly"
+              >
+                <Grid
+                  item
+                  container
+                  xs={1}
                   direction="column"
                   alignItems="flex-start"
                 >
@@ -110,7 +197,6 @@ export default function HeadBar(props) {
                   item
                   container
                   xs={1}
-                  sm={1}
                   direction="column"
                   alignItems="flex-start"
                 >
@@ -128,7 +214,6 @@ export default function HeadBar(props) {
                   item
                   container
                   xs={1}
-                  sm={1}
                   direction="column"
                   alignItems="flex-start"
                 >
@@ -180,8 +265,7 @@ export default function HeadBar(props) {
               <Grid
                 container
                 item
-                xs={12}
-                sm={3}
+                xs={3}
                 direction="row"
                 justify="space-evenly"
               >
@@ -189,7 +273,6 @@ export default function HeadBar(props) {
                   item
                   container
                   xs={1}
-                  sm={1}
                   direction="column"
                   alignItems="flex-start"
                 >

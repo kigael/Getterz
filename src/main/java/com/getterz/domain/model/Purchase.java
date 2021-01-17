@@ -5,12 +5,14 @@ import com.getterz.domain.enumclass.PurchaseState;
 import lombok.*;
 import lombok.experimental.Accessors;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -47,13 +49,11 @@ public class Purchase {
 
     private LocalDateTime arrivalDateTime;
 
-    private Boolean feePaid;
+    private Boolean sellerChecked;
 
     private Boolean wroteReview;
 
     private Boolean sellerDelete;
-
-    private Boolean transporterDelete;
 
     private Boolean buyerDelete;
 

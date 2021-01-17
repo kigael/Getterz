@@ -15,3 +15,5 @@ credential:
   cryptor:
     master_key: j(^MfTFYeS9ArcNE#)2&&*uU:reX\(&Q
     initial_vector: -@y(c6`V)vqAJc2%
+  admin:
+    admin_create_key: dare_not_touch_the_sun

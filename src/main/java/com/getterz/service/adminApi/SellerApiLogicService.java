@@ -109,9 +109,8 @@ public class SellerApiLogicService extends CrudService<SellerApiRequest, SellerA
                                 .latitude(body.getLatitude())
                                 .longitude(body.getLongitude())
                                 .address(Cryptor.ENCRYPT(body.getAddress()))
-                                .cryptoWallet(Cryptor.ENCRYPT(body.getCryptoWallet()))
-                                .fee(BigDecimal.ZERO)
-                                .sold(BigDecimal.ZERO)
+                                .backAccount(Cryptor.ENCRYPT(body.getCryptoWallet()))
+                                .soldAmount(BigDecimal.ZERO)
                                 .build()),
                         SessionApi.updateSession(request.getSession()));
             }
@@ -236,9 +235,8 @@ public class SellerApiLogicService extends CrudService<SellerApiRequest, SellerA
                                 .setLatitude(body.getLatitude())
                                 .setLongitude(body.getLongitude())
                                 .setAddress(Cryptor.ENCRYPT(body.getAddress()))
-                                .setCryptoWallet(Cryptor.ENCRYPT(body.getCryptoWallet()))
-                                .setFee(Optional.ofNullable(body.getFee()).orElse(seller.get().getFee()))
-                                .setSold(Optional.ofNullable(body.getSold()).orElse(seller.get().getSold()))),
+                                .setBackAccount(Cryptor.ENCRYPT(body.getCryptoWallet()))
+                                .setSoldAmount(Optional.ofNullable(body.getSold()).orElse(seller.get().getSoldAmount()))),
                         SessionApi.updateSession(request.getSession()));
             }
             else{
@@ -288,9 +286,8 @@ public class SellerApiLogicService extends CrudService<SellerApiRequest, SellerA
                 .latitude(seller.getLatitude())
                 .longitude(seller.getLongitude())
                 .address(seller.getAddress())
-                .cryptoWallet(seller.getCryptoWallet())
-                .fee(seller.getFee())
-                .sold(seller.getSold())
+                .backAccount(seller.getBackAccount())
+                .soldAmount(seller.getSoldAmount())
                 .build();
         if(seller.getProducts()!=null){
             body.setProducts(new ArrayList<>());
@@ -320,9 +317,8 @@ public class SellerApiLogicService extends CrudService<SellerApiRequest, SellerA
                 .latitude(seller.getLatitude())
                 .longitude(seller.getLongitude())
                 .address(seller.getAddress())
-                .cryptoWallet(seller.getCryptoWallet())
-                .fee(seller.getFee())
-                .sold(seller.getSold())
+                .backAccount(seller.getBackAccount())
+                .soldAmount(seller.getSoldAmount())
                 .build();
     }
 

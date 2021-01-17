@@ -4,13 +4,16 @@ import lombok.*;
 import lombok.experimental.Accessors;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -30,8 +33,8 @@ public class Product {
 
     private BigDecimal cost;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private List<Tag> tags;
+    @ManyToMany(fetch = FetchType.LAZY)
+    private Set<Tag> tags;
 
     @CreatedDate
     private LocalDateTime registeredDate;
@@ -41,7 +44,7 @@ public class Product {
 
     private Long quantity;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "product")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "product")
     private List<Review> reviews;
 
     private String allowedGender;
@@ -50,15 +53,11 @@ public class Product {
 
     private Integer allowedMaximumAge;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private List<Job> allowedJobs;
+    @ManyToMany(fetch = FetchType.LAZY)
+    private Set<Job> allowedJobs;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private List<Job> bannedJobs;
-
-    private BigDecimal allowedMinimumAnnualIncome;
-
-    private BigDecimal allowedMaximumAnnualIncome;
+    @ManyToMany(fetch = FetchType.LAZY)
+    private Set<Job> bannedJobs;
 
     private Boolean exposeToNoQualify;
 

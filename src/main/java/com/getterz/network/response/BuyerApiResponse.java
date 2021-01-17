@@ -43,16 +43,18 @@ public class BuyerApiResponse {
 
     private String address;
 
-    private List<JobApiResponse> job;
-
-    private BigDecimal annualIncome;
+    private List<JobApiResponse> jobs;
 
     private String cryptoWallet;
 
-    private List<PurchaseApiResponse> orders;
+    private List<PurchaseApiResponse> purchases;
 
     private List<ReviewApiResponse> reviews;
 
     private Boolean adminCertified;
+
+    private String verifyImageName;
+
+    private String profileImageName;
 
 }

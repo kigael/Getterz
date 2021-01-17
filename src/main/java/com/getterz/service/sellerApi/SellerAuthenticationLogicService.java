@@ -12,6 +12,7 @@ import com.getterz.service.adminApi.SellerApiLogicService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
@@ -26,6 +27,16 @@ public class SellerAuthenticationLogicService extends AuthenticationService<Sell
     @Override
     public Header<SellerApiResponse> signup(Header<SellerApiRequest> request) {
         return sellerApiLogicService.create(request);
+    }
+
+    @Override
+    public Header<SellerApiResponse> verifyImageUpload(MultipartFile verifyImage, String fileName) {
+        return null;
+    }
+
+    @Override
+    public Header<SellerApiResponse> profileImageUpload(MultipartFile profileImage, String fileName) {
+        return null;
     }
 
     @Override
@@ -76,6 +87,11 @@ public class SellerAuthenticationLogicService extends AuthenticationService<Sell
         }
     }
 
+    @Override
+    public Header<SellerApiResponse> verifyEmail(String token) {
+        return null;
+    }
+
     private SellerApiResponse response(Seller seller){
         return SellerApiResponse.builder()
                 .id(seller.getId())
@@ -91,9 +107,8 @@ public class SellerAuthenticationLogicService extends AuthenticationService<Sell
                 .latitude(seller.getLatitude())
                 .longitude(seller.getLongitude())
                 .address(seller.getAddress())
-                .cryptoWallet(seller.getCryptoWallet())
-                .fee(seller.getFee())
-                .sold(seller.getSold())
+                .backAccount(seller.getBackAccount())
+                .soldAmount(seller.getSoldAmount())
                 .build();
     }
 

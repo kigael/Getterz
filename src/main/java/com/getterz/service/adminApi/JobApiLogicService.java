@@ -39,7 +39,7 @@ public class JobApiLogicService extends CrudService<JobApiRequest, JobApiRespons
             if(isGreen){
                 if(FormatCheck.jobName(body.getName())) return Header.ERROR(transactionType,"INVALID NAME",SessionApi.updateSession(request.getSession()));
 
-                if(jobRepository.findByName(body.getName()).isPresent()) return Header.ERROR(transactionType,"DUPLICATE NAME",SessionApi.updateSession(request.getSession()));
+                if(jobRepository.findFirstByName(body.getName()).isPresent()) return Header.ERROR(transactionType,"DUPLICATE NAME",SessionApi.updateSession(request.getSession()));
 
                 return Header.OK(
                         transactionType,
@@ -102,7 +102,7 @@ public class JobApiLogicService extends CrudService<JobApiRequest, JobApiRespons
 
                 if(FormatCheck.jobName(body.getName())) return Header.ERROR(transactionType,"INVALID NAME",SessionApi.updateSession(request.getSession()));
 
-                if(jobRepository.findByName(body.getName()).isPresent()) return Header.ERROR(transactionType,"DUPLICATE NAME",SessionApi.updateSession(request.getSession()));
+                if(jobRepository.findFirstByName(body.getName()).isPresent()) return Header.ERROR(transactionType,"DUPLICATE NAME",SessionApi.updateSession(request.getSession()));
 
                 return Header.OK(
                         transactionType,

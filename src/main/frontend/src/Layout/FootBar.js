@@ -30,6 +30,8 @@ const useStyles = makeStyles((theme) => ({
         ? "#4fc3f7"
         : props.Type === "Seller"
         ? "#aed581"
+        : props.Type === "Admin"
+        ? "#ffeb3b"
         : "#ed4b82",
     width: "100%",
     position: "fixed",
@@ -77,6 +79,14 @@ export default function FootBar(props) {
     setOpenBuyerLogout(false);
   };
   switch (props.Type) {
+    case "Admin":
+      return (
+        <div>
+          <BottomNavigation showLabels className={classes.footBar}>
+            {"ADMIN"}
+          </BottomNavigation>
+        </div>
+      );
     case "Seller":
       return <div></div>;
     case "Buyer":

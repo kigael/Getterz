@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.Accessors;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -44,6 +46,8 @@ public class Seller {
 
     private String emailAddress;                        // ENCRYPT
 
+    private Boolean emailCertified;
+
     private String cellNumber;                          // ENCRYPT
 
     private Double latitude;
@@ -52,16 +56,14 @@ public class Seller {
 
     private String address;                             // ENCRYPT
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "seller")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "seller")
     private List<Product> products;
 
-    private String cryptoWallet;                        // ENCRYPT
+    private String backAccount;                         // ENCRYPT
 
-    private BigDecimal fee;
+    private BigDecimal soldAmount;
 
-    private BigDecimal sold;
-
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, mappedBy = "seller")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "seller")
     private List<Purchase> purchases;
 
     private Boolean adminCertified;

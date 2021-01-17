@@ -90,10 +90,8 @@ public class PurchaseApiLogicService extends CrudService<PurchaseApiRequest, Pur
                         .totalCost(body.getTotalCost())
                         .deliverMethod(body.getDeliverMethod())
                         .purchaseState(PurchaseState.PREPARING)
-                        .feePaid(Boolean.FALSE)
                         .wroteReview(Boolean.FALSE)
                         .sellerDelete(Boolean.FALSE)
-                        .transporterDelete(Boolean.FALSE)
                         .buyerDelete(Boolean.FALSE)
                         .build())),
                         SessionApi.updateSession(request.getSession()));
@@ -214,10 +212,8 @@ public class PurchaseApiLogicService extends CrudService<PurchaseApiRequest, Pur
                         .setDeliverMethod(body.getDeliverMethod())
                         .setPurchaseState(body.getPurchaseState())
                         .setArrivalDateTime(Optional.ofNullable(body.getArrivalDateTime()).orElse(null))
-                        .setFeePaid(Optional.ofNullable(body.getFeePaid()).orElse(null))
                         .setWroteReview(body.getWroteReview())
                         .setSellerDelete(body.getSellerDelete())
-                        .setTransporterDelete(body.getTransporterDelete())
                         .setBuyerDelete(body.getBuyerDelete()))),
                         SessionApi.updateSession(request.getSession()));
             }
@@ -264,7 +260,6 @@ public class PurchaseApiLogicService extends CrudService<PurchaseApiRequest, Pur
                 .arrivalDateTime(purchase.getArrivalDateTime())
                 .wroteReview(purchase.getWroteReview())
                 .sellerDelete(purchase.getSellerDelete())
-                .transporterDelete(purchase.getTransporterDelete())
                 .buyerDelete(purchase.getBuyerDelete())
                 .build();
         if(purchase.getSeller()!=null) body.setSeller(SellerApiLogicService.Body(purchase.getSeller()));
@@ -284,7 +279,6 @@ public class PurchaseApiLogicService extends CrudService<PurchaseApiRequest, Pur
                 .arrivalDateTime(purchase.getArrivalDateTime())
                 .wroteReview(purchase.getWroteReview())
                 .sellerDelete(purchase.getSellerDelete())
-                .transporterDelete(purchase.getTransporterDelete())
                 .buyerDelete(purchase.getBuyerDelete())
                 .build();
     }

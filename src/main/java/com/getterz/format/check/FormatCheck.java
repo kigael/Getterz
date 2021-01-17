@@ -16,7 +16,7 @@ public class FormatCheck {
     }
 
     public static boolean password(String input){
-        return !input.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&-+=()])(?=\\S+$).{8,20}$");
+        return !input.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%*^&-+=()-])(?=\\S+$).{8,20}$");
 //        ^ represents starting character of the string.
 //        (?=.*[0-9]) represents a digit must occur at least once.
 //        (?=.*[a-z]) represents a lower case alphabet must occur at least once.

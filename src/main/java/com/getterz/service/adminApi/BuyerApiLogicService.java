@@ -17,10 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -75,12 +72,8 @@ public class BuyerApiLogicService extends CrudService<BuyerApiRequest, BuyerApiR
                 description.append("NO ADDRESS\n");
                 isGreen=Boolean.FALSE;
             }
-            if(body.getJob()==null){
+            if(body.getJobs()==null){
                 description.append("NO JOB\n");
-                isGreen=Boolean.FALSE;
-            }
-            if(body.getAnnualIncome()==null){
-                description.append("NO ANNUAL INCOME\n");
                 isGreen=Boolean.FALSE;
             }
             if(body.getCryptoWallet()==null){
@@ -90,7 +83,7 @@ public class BuyerApiLogicService extends CrudService<BuyerApiRequest, BuyerApiR
             if(isGreen){
                 if(FormatCheck.name(body.getName())) return Header.ERROR(transactionType,"INVALID NAME",SessionApi.updateSession(request.getSession()));
 
-                if(buyerRepository.findByEmailAddress(Cryptor.ENCRYPT(body.getEmailAddress())).isPresent()) return Header.ERROR(transactionType,"DUPLICATE EMAIL ADDRESS",SessionApi.updateSession(request.getSession()));
+                if(!buyerRepository.findByEmailAddressAndEmailCertified(Cryptor.ENCRYPT(body.getEmailAddress()),true).isEmpty()) return Header.ERROR(transactionType,"DUPLICATE EMAIL ADDRESS",SessionApi.updateSession(request.getSession()));
 
                 if(FormatCheck.password(body.getPassword())) return Header.ERROR(transactionType,"INVALID PASSWORD",SessionApi.updateSession(request.getSession()));
 
@@ -106,16 +99,14 @@ public class BuyerApiLogicService extends CrudService<BuyerApiRequest, BuyerApiR
 
                 if(FormatCheck.address(body.getAddress())) return Header.ERROR(transactionType,"INVALID ADDRESS",SessionApi.updateSession(request.getSession()));
 
-                if(body.getJob().isEmpty()) return Header.ERROR(transactionType,"EMPTY JOB",SessionApi.updateSession(request.getSession()));
+                if(body.getJobs().isEmpty()) return Header.ERROR(transactionType,"EMPTY JOB",SessionApi.updateSession(request.getSession()));
 
-                for(String j : body.getJob()) if(FormatCheck.jobName(j)) return Header.ERROR(transactionType,"INVALID JOB",SessionApi.updateSession(request.getSession()));
-
-                if(body.getAnnualIncome().compareTo(BigDecimal.ZERO)<0) return Header.ERROR(transactionType,"INVALID ANNUAL INCOME",SessionApi.updateSession(request.getSession()));
+                for(String j : body.getJobs()) if(FormatCheck.jobName(j)) return Header.ERROR(transactionType,"INVALID JOB",SessionApi.updateSession(request.getSession()));
 
                 if(FormatCheck.cryptoWallet(body.getCryptoWallet())) return Header.ERROR(transactionType,"INVALID CRYPTO WALLET",SessionApi.updateSession(request.getSession()));
 
-                List<Job> jobsToInsert = new ArrayList<>();
-                for(String jobName : body.getJob()) jobsToInsert.add(jobRepository.findByName(jobName).orElse(jobRepository.save(Job.builder().name(jobName).build())));
+                Set<Job> jobsToInsert = new HashSet<>();
+                for(String jobName : body.getJobs()) jobsToInsert.add(jobRepository.findFirstByName(jobName).orElse(jobRepository.save(Job.builder().name(jobName).build())));
 
                 return Header.OK(
                         transactionType,
@@ -130,8 +121,7 @@ public class BuyerApiLogicService extends CrudService<BuyerApiRequest, BuyerApiR
                                 .latitude(body.getLatitude())
                                 .longitude(body.getLongitude())
                                 .address(Cryptor.ENCRYPT(body.getAddress()))
-                                .job(jobsToInsert)
-                                .annualIncome(body.getAnnualIncome())
+                                .jobs(jobsToInsert)
                                 .cryptoWallet(Cryptor.ENCRYPT(body.getCryptoWallet()))
                                 .build())),
                         SessionApi.updateSession(request.getSession())
@@ -217,12 +207,8 @@ public class BuyerApiLogicService extends CrudService<BuyerApiRequest, BuyerApiR
                 description.append("NO ADDRESS\n");
                 isGreen=Boolean.FALSE;
             }
-            if(body.getJob()==null){
+            if(body.getJobs()==null){
                 description.append("NO JOB\n");
-                isGreen=Boolean.FALSE;
-            }
-            if(body.getAnnualIncome()==null){
-                description.append("NO ANNUAL INCOME\n");
                 isGreen=Boolean.FALSE;
             }
             if(body.getCryptoWallet()==null){
@@ -235,7 +221,7 @@ public class BuyerApiLogicService extends CrudService<BuyerApiRequest, BuyerApiR
 
                 if(FormatCheck.name(body.getName())) return Header.ERROR(transactionType,"INVALID NAME",SessionApi.updateSession(request.getSession()));
 
-                if(buyerRepository.findByEmailAddress(Cryptor.ENCRYPT(body.getEmailAddress())).isPresent()) return Header.ERROR(transactionType,"DUPLICATE PROFILE NAME",SessionApi.updateSession(request.getSession()));
+                if(!buyerRepository.findByEmailAddressAndEmailCertified(Cryptor.ENCRYPT(body.getEmailAddress()),true).isEmpty()) return Header.ERROR(transactionType,"DUPLICATE PROFILE NAME",SessionApi.updateSession(request.getSession()));
 
                 if(FormatCheck.password(body.getPassword())) return Header.ERROR(transactionType,"INVALID PASSWORD",SessionApi.updateSession(request.getSession()));
 
@@ -251,16 +237,14 @@ public class BuyerApiLogicService extends CrudService<BuyerApiRequest, BuyerApiR
 
                 if(FormatCheck.address(body.getAddress())) return Header.ERROR(transactionType,"INVALID ADDRESS",SessionApi.updateSession(request.getSession()));
 
-                if(body.getJob().isEmpty()) return Header.ERROR(transactionType,"EMPTY JOB",SessionApi.updateSession(request.getSession()));
+                if(body.getJobs().isEmpty()) return Header.ERROR(transactionType,"EMPTY JOB",SessionApi.updateSession(request.getSession()));
 
-                for(String j : body.getJob()) if(FormatCheck.jobName(j)) return Header.ERROR(transactionType,"INVALID JOB",SessionApi.updateSession(request.getSession()));
-
-                if(body.getAnnualIncome().compareTo(BigDecimal.ZERO)<0) return Header.ERROR(transactionType,"INVALID ANNUAL INCOME",SessionApi.updateSession(request.getSession()));
+                for(String j : body.getJobs()) if(FormatCheck.jobName(j)) return Header.ERROR(transactionType,"INVALID JOB",SessionApi.updateSession(request.getSession()));
 
                 if(FormatCheck.cryptoWallet(body.getCryptoWallet())) return Header.ERROR(transactionType,"INVALID CRYPTO WALLET",SessionApi.updateSession(request.getSession()));
 
-                List<Job> jobsToInsert = new ArrayList<>();
-                for(String jobName : body.getJob()) jobsToInsert.add(jobRepository.findByName(jobName).orElse(jobRepository.save(Job.builder().name(jobName).build())));
+                Set<Job> jobsToInsert = new HashSet<>();
+                for(String jobName : body.getJobs()) jobsToInsert.add(jobRepository.findFirstByName(jobName).orElse(jobRepository.save(Job.builder().name(jobName).build())));
 
                 return Header.OK(
                         transactionType,
@@ -275,8 +259,7 @@ public class BuyerApiLogicService extends CrudService<BuyerApiRequest, BuyerApiR
                                 .setLatitude(body.getLatitude())
                                 .setLongitude(body.getLongitude())
                                 .setAddress(Cryptor.ENCRYPT(body.getAddress()))
-                                .setJob(jobsToInsert)
-                                .setAnnualIncome(body.getAnnualIncome())
+                                .setJobs(jobsToInsert)
                                 .setCryptoWallet(Cryptor.ENCRYPT(body.getCryptoWallet())))),
                         SessionApi.updateSession(request.getSession())
                 );
@@ -328,23 +311,22 @@ public class BuyerApiLogicService extends CrudService<BuyerApiRequest, BuyerApiR
                 .latitude(buyer.getLatitude())
                 .longitude(buyer.getLongitude())
                 .address(buyer.getAddress())
-                .annualIncome(buyer.getAnnualIncome())
                 .cryptoWallet(buyer.getCryptoWallet())
                 .build();
         if(buyer.getPurchases()!=null){
-            body.setOrders(new ArrayList<>());
+            body.setPurchases(new ArrayList<>());
             for(Purchase purchase : buyer.getPurchases())
-                body.getOrders().add(PurchaseApiLogicService.Body(purchase));
+                body.getPurchases().add(PurchaseApiLogicService.Body(purchase));
         }
         if(buyer.getReviews()!=null){
             body.setReviews(new ArrayList<>());
             for(Review review : buyer.getReviews())
                 body.getReviews().add(ReviewApiLogicService.Body(review));
         }
-        if(buyer.getJob()!=null){
-            body.setJob(new ArrayList<>());
-            for(Job job : buyer.getJob())
-                body.getJob().add(JobApiLogicService.Body(job));
+        if(buyer.getJobs()!=null){
+            body.setJobs(new ArrayList<>());
+            for(Job job : buyer.getJobs())
+                body.getJobs().add(JobApiLogicService.Body(job));
         }
         return body;
     }
@@ -364,7 +346,6 @@ public class BuyerApiLogicService extends CrudService<BuyerApiRequest, BuyerApiR
                 .latitude(buyer.getLatitude())
                 .longitude(buyer.getLongitude())
                 .address(buyer.getAddress())
-                .annualIncome(buyer.getAnnualIncome())
                 .cryptoWallet(buyer.getCryptoWallet())
                 .build();
     }

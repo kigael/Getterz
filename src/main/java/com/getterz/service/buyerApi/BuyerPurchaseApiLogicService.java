@@ -4,8 +4,14 @@ import com.getterz.crypt.Cryptor;
 import com.getterz.domain.enumclass.OrderByType;
 import com.getterz.domain.enumclass.PurchaseState;
 import com.getterz.domain.enumclass.UserType;
-import com.getterz.domain.model.*;
-import com.getterz.domain.repository.*;
+import com.getterz.domain.model.Buyer;
+import com.getterz.domain.model.Product;
+import com.getterz.domain.model.Purchase;
+import com.getterz.domain.model.Seller;
+import com.getterz.domain.repository.BuyerRepository;
+import com.getterz.domain.repository.ProductRepository;
+import com.getterz.domain.repository.PurchaseRepository;
+import com.getterz.domain.repository.SellerRepository;
 import com.getterz.network.Header;
 import com.getterz.network.request.PurchaseApiRequest;
 import com.getterz.network.request.PurchaseHistoryApiRequest;
@@ -13,7 +19,10 @@ import com.getterz.network.response.PurchaseApiResponse;
 import com.getterz.network.response.PurchaseHistoryApiResponse;
 import com.getterz.network.session.Session;
 import com.getterz.network.session.SessionApi;
-import com.getterz.service.adminApi.*;
+import com.getterz.service.adminApi.BuyerApiLogicService;
+import com.getterz.service.adminApi.ProductApiLogicService;
+import com.getterz.service.adminApi.PurchaseApiLogicService;
+import com.getterz.service.adminApi.SellerApiLogicService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -344,10 +353,8 @@ public class BuyerPurchaseApiLogicService {
                                 .totalCost(body.getTotalCost())
                                 .deliverMethod(body.getDeliverMethod())
                                 .purchaseState(PurchaseState.PREPARING)
-                                .feePaid(Boolean.FALSE)
                                 .wroteReview(Boolean.FALSE)
                                 .sellerDelete(Boolean.FALSE)
-                                .transporterDelete(Boolean.FALSE)
                                 .buyerDelete(Boolean.FALSE)
                                 .build())),
                         SessionApi.updateSession(request.getSession()));
@@ -401,7 +408,6 @@ public class BuyerPurchaseApiLogicService {
                 .arrivalDateTime(purchase.getArrivalDateTime())
                 .wroteReview(purchase.getWroteReview())
                 .sellerDelete(purchase.getSellerDelete())
-                .transporterDelete(purchase.getTransporterDelete())
                 .buyerDelete(purchase.getBuyerDelete())
                 .build();
         if(purchase.getSeller()!=null) body.setSeller(SellerApiLogicService.Body(purchase.getSeller()));

@@ -291,7 +291,7 @@ public class BuyerSearchApiLogicService {
                     Set<Long> buyerJob2 = new HashSet<>();
                     Set<Long> allowedJob = new HashSet<>();
                     Set<Long> bannedJob = new HashSet<>();
-                    for(Job j : buyer.get().getJob()) {buyerJob1.add(j.getId());buyerJob2.add(j.getId());}
+                    for(Job j : buyer.get().getJobs()) {buyerJob1.add(j.getId());buyerJob2.add(j.getId());}
                     for(Job j : product.get().getAllowedJobs()) allowedJob.add(j.getId());
                     for(Job j : product.get().getBannedJobs()) bannedJob.add(j.getId());
                     buyerJob1.retainAll(allowedJob);
@@ -300,8 +300,6 @@ public class BuyerSearchApiLogicService {
                         !product.get().getAllowedGender().contains(buyer.get().getGender().toString())||
                         product.get().getAllowedMinimumAge()>Period.between(buyer.get().getDateOfBirth(),LocalDate.now()).getYears()||
                         Period.between(buyer.get().getDateOfBirth(),LocalDate.now()).getYears()>product.get().getAllowedMaximumAge()||
-                        product.get().getAllowedMinimumAnnualIncome().compareTo(buyer.get().getAnnualIncome())>0||
-                        buyer.get().getAnnualIncome().compareTo(product.get().getAllowedMaximumAnnualIncome())>0||
                         allowedJob.size()>0&&buyerJob1.size()==0&&
                         bannedJob.size()>0&&buyerJob2.size()>0
                     ) return Header.ERROR(transactionType,"INVALID SESSION", SessionApi.updateSession(session));
@@ -325,8 +323,6 @@ public class BuyerSearchApiLogicService {
                 .allowedGender(DtoConverter.stringToSetOfGender(product.getAllowedGender()))
                 .allowedMinimumAge(product.getAllowedMinimumAge())
                 .allowedMaximumAge(product.getAllowedMaximumAge())
-                .allowedMinimumAnnualIncome(product.getAllowedMinimumAnnualIncome())
-                .allowedMaximumAnnualIncome(product.getAllowedMaximumAnnualIncome())
                 .exposeToNoQualify(product.getExposeToNoQualify())
                 .build();
         if(product.getSeller()!=null) body.setSeller(SellerApiLogicService.Body(product.getSeller()));
@@ -355,24 +351,22 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithName(Buyer buyer, String productName, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithName(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 productName,
                 pageable);
     }
 
     private Page<Product> findWithNameAndMinimumCost(Buyer buyer, String productName, BigDecimal minimumCost, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndMinimumCost(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 productName,
                 minimumCost,
                 pageable);
@@ -380,12 +374,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndMaximumCost(Buyer buyer, String productName, BigDecimal maximumCost, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndMaximumCost(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 productName,
                 maximumCost,
                 pageable);
@@ -393,12 +386,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndMinimumCostAndMaximumCost(Buyer buyer, String productName, BigDecimal minimumCost, BigDecimal maximumCost, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndMinimumCostAndMaximumCost(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 productName,
                 minimumCost,
                 maximumCost,
@@ -407,12 +399,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndTags(Buyer buyer, String productName, Set<String> tags, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndTags(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 productName,
                 tags,
                 tags.size(),
@@ -421,12 +412,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndMinimumCostAndTags(Buyer buyer, String productName, BigDecimal minimumCost, Set<String> tags, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndMinimumCostAndTags(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 productName,
                 minimumCost,
                 tags,
@@ -436,12 +426,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndMaximumCostAndTags(Buyer buyer, String productName, BigDecimal maximumCost, Set<String> tags, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndMaximumCostAndTags(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 productName,
                 maximumCost,
                 tags,
@@ -451,12 +440,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndMinimumCostAndMaximumCostAndTags(Buyer buyer, String productName, BigDecimal minimumCost, BigDecimal maximumCost, Set<String> tags, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndMinimumCostAndMaximumCostAndTags(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 productName,
                 minimumCost,
                 maximumCost,
@@ -467,12 +455,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameOrderByDistanceAsc(Buyer buyer, String productName, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameOrderByDistanceAsc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 buyer.getLatitude(),
                 buyer.getLongitude(),
                 productName,
@@ -481,12 +468,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameOrderByDistanceDesc(Buyer buyer, String productName, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameOrderByDistanceDesc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 buyer.getLatitude(),
                 buyer.getLongitude(),
                 productName,
@@ -495,12 +481,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndMinimumCostOrderByDistanceAsc(Buyer buyer, String productName, BigDecimal minimumCost, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndMinimumCostOrderByDistanceAsc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 buyer.getLatitude(),
                 buyer.getLongitude(),
                 productName,
@@ -510,12 +495,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndMinimumCostOrderByDistanceDesc(Buyer buyer, String productName, BigDecimal minimumCost, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndMinimumCostOrderByDistanceDesc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 buyer.getLatitude(),
                 buyer.getLongitude(),
                 productName,
@@ -525,12 +509,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndMaximumCostOrderByDistanceAsc(Buyer buyer, String productName, BigDecimal maximumCost, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndMaximumCostOrderByDistanceAsc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 buyer.getLatitude(),
                 buyer.getLongitude(),
                 productName,
@@ -540,12 +523,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndMaximumCostOrderByDistanceDesc(Buyer buyer, String productName, BigDecimal maximumCost, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndMaximumCostOrderByDistanceDesc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 buyer.getLatitude(),
                 buyer.getLongitude(),
                 productName,
@@ -555,12 +537,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndMinimumCostAndMaximumCostOrderByDistanceAsc(Buyer buyer, String productName, BigDecimal minimumCost, BigDecimal maximumCost, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndMinimumCostAndMaximumCostOrderByDistanceAsc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 buyer.getLatitude(),
                 buyer.getLongitude(),
                 productName,
@@ -571,12 +552,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndMinimumCostAndMaximumCostOrderByDistanceDesc(Buyer buyer, String productName, BigDecimal minimumCost, BigDecimal maximumCost, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndMinimumCostAndMaximumCostOrderByDistanceDesc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 buyer.getLatitude(),
                 buyer.getLongitude(),
                 productName,
@@ -587,12 +567,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndTagsOrderByDistanceAsc(Buyer buyer, String productName, Set<String> tags, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndTagsOrderByDistanceAsc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 buyer.getLatitude(),
                 buyer.getLongitude(),
                 productName,
@@ -603,12 +582,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndTagsOrderByDistanceDesc(Buyer buyer, String productName, Set<String> tags, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndTagsOrderByDistanceDesc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 buyer.getLatitude(),
                 buyer.getLongitude(),
                 productName,
@@ -619,12 +597,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndMinimumCostAndTagsOrderByDistanceAsc(Buyer buyer, String productName, BigDecimal minimumCost, Set<String> tags, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndMinimumCostAndTagsOrderByDistanceAsc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 buyer.getLatitude(),
                 buyer.getLongitude(),
                 productName,
@@ -636,12 +613,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndMinimumCostAndTagsOrderByDistanceDesc(Buyer buyer, String productName, BigDecimal minimumCost, Set<String> tags, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndMinimumCostAndTagsOrderByDistanceDesc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 buyer.getLatitude(),
                 buyer.getLongitude(),
                 productName,
@@ -653,12 +629,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndMaximumCostAndTagsOrderByDistanceAsc(Buyer buyer, String productName, BigDecimal maximumCost, Set<String> tags, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndMaximumCostAndTagsOrderByDistanceAsc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 buyer.getLatitude(),
                 buyer.getLongitude(),
                 productName,
@@ -670,12 +645,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndMaximumCostAndTagsOrderByDistanceDesc(Buyer buyer, String productName, BigDecimal maximumCost, Set<String> tags, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndMaximumCostAndTagsOrderByDistanceDesc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 buyer.getLatitude(),
                 buyer.getLongitude(),
                 productName,
@@ -687,12 +661,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndMinimumCostAndMaximumCostAndTagsOrderByDistanceAsc(Buyer buyer, String productName, BigDecimal minimumCost, BigDecimal maximumCost, Set<String> tags, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndMinimumCostAndMaximumCostAndTagsOrderByDistanceAsc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 buyer.getLatitude(),
                 buyer.getLongitude(),
                 productName,
@@ -705,12 +678,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndMinimumCostAndMaximumCostAndTagsOrderByDistanceDesc(Buyer buyer, String productName, BigDecimal minimumCost, BigDecimal maximumCost, Set<String> tags, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndMinimumCostAndMaximumCostAndTagsOrderByDistanceDesc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 buyer.getLatitude(),
                 buyer.getLongitude(),
                 productName,
@@ -723,36 +695,33 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameOrderByCostAsc(Buyer buyer, String productName, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameOrderByCostAsc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 productName,
                 pageable);
     }
 
     private Page<Product> findWithNameOrderByCostDesc(Buyer buyer, String productName, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameOrderByCostDesc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 productName,
                 pageable);
     }
 
     private Page<Product> findWithNameAndMinimumCostOrderByCostAsc(Buyer buyer, String productName, BigDecimal minimumCost, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndMinimumCostOrderByCostAsc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 productName,
                 minimumCost,
                 pageable);
@@ -760,12 +729,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndMinimumCostOrderByCostDesc(Buyer buyer, String productName, BigDecimal minimumCost, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndMinimumCostOrderByCostDesc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 productName,
                 minimumCost,
                 pageable);
@@ -773,12 +741,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndMaximumCostOrderByCostAsc(Buyer buyer, String productName, BigDecimal maximumCost, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndMaximumCostOrderByCostAsc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 productName,
                 maximumCost,
                 pageable);
@@ -786,12 +753,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndMaximumCostOrderByCostDesc(Buyer buyer, String productName, BigDecimal maximumCost, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndMaximumCostOrderByCostDesc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 productName,
                 maximumCost,
                 pageable);
@@ -799,12 +765,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndMinimumCostAndMaximumCostOrderByCostAsc(Buyer buyer, String productName, BigDecimal minimumCost, BigDecimal maximumCost, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndMinimumCostAndMaximumCostOrderByCostAsc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 productName,
                 minimumCost,
                 maximumCost,
@@ -813,12 +778,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndMinimumCostAndMaximumCostOrderByCostDesc(Buyer buyer, String productName, BigDecimal minimumCost, BigDecimal maximumCost, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndMinimumCostAndMaximumCostOrderByCostDesc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 productName,
                 minimumCost,
                 maximumCost,
@@ -827,12 +791,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndTagsOrderByCostAsc(Buyer buyer, String productName, Set<String> tags, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndTagsOrderByCostAsc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 productName,
                 tags,
                 tags.size(),
@@ -841,12 +804,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndTagsOrderByCostDesc(Buyer buyer, String productName, Set<String> tags, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndTagsOrderByCostDesc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 productName,
                 tags,
                 tags.size(),
@@ -855,12 +817,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndMinimumCostAndTagsOrderByCostAsc(Buyer buyer, String productName, BigDecimal minimumCost, Set<String> tags, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndMinimumCostAndTagsOrderByCostAsc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 productName,
                 minimumCost,
                 tags,
@@ -870,12 +831,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndMinimumCostAndTagsOrderByCostDesc(Buyer buyer, String productName, BigDecimal minimumCost, Set<String> tags, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndMinimumCostAndTagsOrderByCostDesc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 productName,
                 minimumCost,
                 tags,
@@ -885,12 +845,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndMaximumCostAndTagsOrderByCostAsc(Buyer buyer, String productName, BigDecimal maximumCost, Set<String> tags, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndMaximumCostAndTagsOrderByCostAsc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 productName,
                 maximumCost,
                 tags,
@@ -900,12 +859,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndMaximumCostAndTagsOrderByCostDesc(Buyer buyer, String productName, BigDecimal maximumCost, Set<String> tags, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndMaximumCostAndTagsOrderByCostDesc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 productName,
                 maximumCost,
                 tags,
@@ -915,12 +873,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndMinimumCostAndMaximumCostAndTagsOrderByCostAsc(Buyer buyer, String productName, BigDecimal minimumCost, BigDecimal maximumCost, Set<String> tags, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndMinimumCostAndMaximumCostAndTagsOrderByCostAsc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 productName,
                 minimumCost,
                 maximumCost,
@@ -931,12 +888,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndMinimumCostAndMaximumCostAndTagsOrderByCostDesc(Buyer buyer, String productName, BigDecimal minimumCost, BigDecimal maximumCost, Set<String> tags, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndMinimumCostAndMaximumCostAndTagsOrderByCostDesc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 productName,
                 minimumCost,
                 maximumCost,
@@ -947,36 +903,33 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameOrderByReviewAsc(Buyer buyer, String productName, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameOrderByReviewAsc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 productName,
                 pageable);
     }
 
     private Page<Product> findWithNameOrderByReviewDesc(Buyer buyer, String productName, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameOrderByReviewDesc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 productName,
                 pageable);
     }
 
     private Page<Product> findWithNameAndMinimumCostOrderByReviewAsc(Buyer buyer, String productName, BigDecimal minimumCost, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndMinimumCostOrderByReviewAsc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 productName,
                 minimumCost,
                 pageable);
@@ -984,12 +937,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndMinimumCostOrderByReviewDesc(Buyer buyer, String productName, BigDecimal minimumCost, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndMinimumCostOrderByReviewDesc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 productName,
                 minimumCost,
                 pageable);
@@ -997,12 +949,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndMaximumCostOrderByReviewAsc(Buyer buyer, String productName, BigDecimal maximumCost, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndMaximumCostOrderByReviewAsc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 productName,
                 maximumCost,
                 pageable);
@@ -1010,12 +961,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndMaximumCostOrderByReviewDesc(Buyer buyer, String productName, BigDecimal maximumCost, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndMaximumCostOrderByReviewDesc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 productName,
                 maximumCost,
                 pageable);
@@ -1023,12 +973,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndMinimumCostAndMaximumCostOrderByReviewAsc(Buyer buyer, String productName, BigDecimal minimumCost, BigDecimal maximumCost, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndMinimumCostAndMaximumCostOrderByReviewAsc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 productName,
                 minimumCost,
                 maximumCost,
@@ -1037,12 +986,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndMinimumCostAndMaximumCostOrderByReviewDesc(Buyer buyer, String productName, BigDecimal minimumCost, BigDecimal maximumCost, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndMinimumCostAndMaximumCostOrderByReviewDesc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 productName,
                 minimumCost,
                 maximumCost,
@@ -1051,12 +999,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndTagsOrderByReviewAsc(Buyer buyer, String productName, Set<String> tags, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndTagsOrderByReviewAsc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 productName,
                 tags,
                 tags.size(),
@@ -1065,12 +1012,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndTagsOrderByReviewDesc(Buyer buyer, String productName, Set<String> tags, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndTagsOrderByReviewDesc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 productName,
                 tags,
                 tags.size(),
@@ -1079,12 +1025,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndMinimumCostAndTagsOrderByReviewAsc(Buyer buyer, String productName, BigDecimal minimumCost, Set<String> tags, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndMinimumCostAndTagsOrderByReviewAsc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 productName,
                 minimumCost,
                 tags,
@@ -1094,12 +1039,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndMinimumCostAndTagsOrderByReviewDesc(Buyer buyer, String productName, BigDecimal minimumCost, Set<String> tags, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndMinimumCostAndTagsOrderByReviewDesc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 productName,
                 minimumCost,
                 tags,
@@ -1109,12 +1053,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndMaximumCostAndTagsOrderByReviewAsc(Buyer buyer, String productName, BigDecimal maximumCost, Set<String> tags, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndMaximumCostAndTagsOrderByReviewAsc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 productName,
                 maximumCost,
                 tags,
@@ -1124,12 +1067,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndMaximumCostAndTagsOrderByReviewDesc(Buyer buyer, String productName, BigDecimal maximumCost, Set<String> tags, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndMaximumCostAndTagsOrderByReviewDesc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 productName,
                 maximumCost,
                 tags,
@@ -1139,12 +1081,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndMinimumCostAndMaximumCostAndTagsOrderByReviewAsc(Buyer buyer, String productName, BigDecimal minimumCost, BigDecimal maximumCost, Set<String> tags, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndMinimumCostAndMaximumCostAndTagsOrderByReviewAsc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 productName,
                 minimumCost,
                 maximumCost,
@@ -1155,12 +1096,11 @@ public class BuyerSearchApiLogicService {
 
     private Page<Product> findWithNameAndMinimumCostAndMaximumCostAndTagsOrderByReviewDesc(Buyer buyer, String productName, BigDecimal minimumCost, BigDecimal maximumCost, Set<String> tags, Pageable pageable){
         List<Long> jobIds = new ArrayList<>();
-        for(Job j : buyer.getJob()) jobIds.add(j.getId());
+        for(Job j : buyer.getJobs()) jobIds.add(j.getId());
         return productRepository.findWithNameAndMinimumCostAndMaximumCostAndTagsOrderByReviewDesc(
                 buyer.getGender().toString(),
                 Period.between(buyer.getDateOfBirth(), LocalDate.now()).getYears(),
                 jobIds,
-                buyer.getAnnualIncome(),
                 productName,
                 minimumCost,
                 maximumCost,
