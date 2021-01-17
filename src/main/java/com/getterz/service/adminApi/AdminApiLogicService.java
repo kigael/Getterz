@@ -180,7 +180,7 @@ public class AdminApiLogicService {
             Optional<Buyer> buyer = buyerRepository.findById(body.getBuyerId());
             if(buyer.isEmpty()) return Header.ERROR(transactionType,"BUYER NOT FOUND",SessionApi.updateSession(request.getSession()));
             try{
-                getterzMailService.sendBuyerAdminMessage(buyer.get().getEmailAddress(),body.getMessage());
+                getterzMailService.sendBuyerAdminMessage(Cryptor.DECRYPT(buyer.get().getEmailAddress()),body.getMessage());
             }catch (Exception e){
                 return Header.ERROR(transactionType,"EMAIL SEND FAIL",SessionApi.updateSession(request.getSession()));
             }

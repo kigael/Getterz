@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
+import { useHistory } from "react-router-dom";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { adminLoading, adminDone } from "../info/AdminInfo";
@@ -83,6 +84,7 @@ export default function BuyerVerifyCertifyBody(props) {
   const session = props.session;
   const buyerId = props.match.params.buyerId;
   const [buyer, setBuyer] = useState(null);
+  const [message, setMessage] = useState("");
   const dispatch = useDispatch();
   const loading = () => dispatch(adminLoading());
   const done = () => dispatch(adminDone());
@@ -90,6 +92,13 @@ export default function BuyerVerifyCertifyBody(props) {
   const handleImageOpen = () => {
     setIsImageOpen(!isImageOpen);
   };
+  const handleMessageChange = (e) => {
+    setMessage(e.target.value);
+  };
+  const history = useHistory();
+  const redirecTo = useCallback(() => history.push("/admin/buyer_verify"), [
+    history,
+  ]);
   const GetBuyer = async () => {
     loading();
     await axios
@@ -109,6 +118,62 @@ export default function BuyerVerifyCertifyBody(props) {
       .catch(function (error) {
         done();
       });
+  };
+  const Approve = async () => {
+    loading();
+    if (message !== "") {
+      await axios
+        .post("/admin/buyer_verify", {
+          transactionTime: "",
+          transactionType: "ADMIN BUYER VERIFY",
+          data: {
+            certify: true,
+            buyerId: buyer.id,
+            message: message,
+          },
+          session: session,
+        })
+        .then(function (response) {
+          if (response.data.resultCode === "OK") {
+            done();
+            redirecTo();
+          } else if (response.data.resultCode === "ERROR") {
+            done();
+            console.log(response);
+          }
+        })
+        .catch(function (error) {
+          done();
+        });
+    }
+  };
+  const Refuse = async () => {
+    loading();
+    if (message !== "") {
+      await axios
+        .post("/admin/buyer_verify", {
+          transactionTime: "",
+          transactionType: "ADMIN BUYER VERIFY",
+          data: {
+            certify: false,
+            buyerId: buyer.id,
+            message: message,
+          },
+          session: session,
+        })
+        .then(function (response) {
+          if (response.data.resultCode === "OK") {
+            done();
+            redirecTo();
+          } else if (response.data.resultCode === "ERROR") {
+            done();
+            console.log(response);
+          }
+        })
+        .catch(function (error) {
+          done();
+        });
+    }
   };
   if (!called) {
     setCalled(true);
@@ -242,12 +307,27 @@ export default function BuyerVerifyCertifyBody(props) {
               Show job verifying image
             </Button>
           </Grid>
+          <Grid item xs={12}>
+            <TextField
+              id="message"
+              name="message"
+              value={message}
+              label="Message"
+              fullWidth
+              onChange={handleMessageChange}
+              multiline
+              rows={3}
+              defaultValue="Message to buyer"
+              variant="outlined"
+            />
+          </Grid>
           <Grid item xs={6}>
             <Button
               fullWidth
               variant="contained"
               color="primary"
               className={classes.submit}
+              onClick={Approve}
             >
               Approve
             </Button>
@@ -258,6 +338,7 @@ export default function BuyerVerifyCertifyBody(props) {
               variant="contained"
               color="secondary"
               className={classes.submit}
+              onClick={Refuse}
             >
               Refuse
             </Button>
