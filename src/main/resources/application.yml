@@ -9,7 +9,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost/GetterzDB?serverTimezone=UTC&characterEncoding=UTF-8
     username: root
-    password: kenem-1257-!
+    password: Kenem-1257-!
   jpa:
     show-sql: true
     hibernate:

@@ -24,21 +24,21 @@ const useStyles = makeStyles((theme) => ({
   },
   sellerIcon: {
     color: theme.palette.success.main,
-    width: 100,
-    height: 100,
+    width: 50,
+    height: 50,
   },
   sellerText: {
     color: theme.palette.success.main,
-    fontSize: 100,
+    fontSize: 50,
   },
   buyerIcon: {
     color: theme.palette.primary.main,
-    width: 100,
-    height: 100,
+    width: 50,
+    height: 50,
   },
   buyerText: {
     color: theme.palette.primary.main,
-    fontSize: 100,
+    fontSize: 50,
   },
 }));
 
@@ -46,29 +46,28 @@ export default function GateBody() {
   const classes = useStyles();
   return (
     <>
-      <Grid container item xs={12} sm={12} justify="center">
-        <Grid item xs={0} sm={4} />
-        <Grid item xs={12} sm={4}>
+      <Grid container item xs={12} justify="center">
+        <Grid item xs={4} />
+        <Grid item xs={4}>
           <Box border={6} m="5rem" className={classes.box}>
-            <Typography variant="h1" m="3rem" className={classes.getterzWill}>
+            <Typography variant="h2" m="3rem" className={classes.getterzWill}>
               Getterz will
             </Typography>
-            <Typography variant="h2" m="3rem" className={classes.getYou}>
+            <Typography variant="h3" m="3rem" className={classes.getYou}>
               get you
             </Typography>
-            <Typography variant="h1" m="3rem" className={classes.anything}>
+            <Typography variant="h2" m="3rem" className={classes.anything}>
               anything
             </Typography>
           </Box>
         </Grid>
-        <Grid item xs={0} sm={4} />
+        <Grid item xs={4} />
       </Grid>
       <Grid container item xs={12} sm={12} direction="row" justify="center">
         <Grid
           container
           item
-          xs={12}
-          sm={6}
+          xs={6}
           direction="column"
           alignItems="center"
           style={{ textAlign: "center" }}
@@ -84,8 +83,7 @@ export default function GateBody() {
         <Grid
           container
           item
-          xs={12}
-          sm={6}
+          xs={6}
           direction="column"
           alignItems="center"
           style={{ textAlign: "center" }}

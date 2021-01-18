@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
   }),
 }));
 
-export default function FootBar(props) {
+export default function SellerFootBar(props) {
   const classes = useStyles(props);
   const { sellerHeader, buyerHeader } = useSelector((state) => ({
     sellerHeader: state.SellerInfo.header,

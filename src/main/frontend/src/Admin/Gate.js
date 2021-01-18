@@ -1,9 +1,9 @@
 import React, { useCallback } from "react";
 import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
-import HeadBar from "../Layout/HeadBar";
-import BodyPaper from "../Layout/BodyPaper";
-import FootBar from "../Layout/FootBar";
+import AdminHeadBar from "../Layout/AdminHeadBar";
+import AdminBodyPaper from "../Layout/AdminBodyPaper";
+import AdminFootBar from "../Layout/AdminFootBar";
 import GateBody from "./GateBody";
 
 export default function Gate() {
@@ -18,9 +18,9 @@ export default function Gate() {
   }
   return (
     <div>
-      <HeadBar Type="Admin" />
-      <BodyPaper Type="Admin" InsideTag={<GateBody />} />
-      <FootBar Type="Admin" />
+      <AdminHeadBar />
+      <AdminBodyPaper Body={<GateBody />} />
+      <AdminFootBar />
     </div>
   );
 }

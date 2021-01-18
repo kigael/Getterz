@@ -1,15 +1,15 @@
 import React from "react";
-import HeadBar from "./Layout/HeadBar";
-import BodyPaper from "./Layout/BodyPaper";
-import FootBar from "./Layout/FootBar";
+import DefaultHeadBar from "./Layout/DefaultHeadBar";
+import DefaultBodyPaper from "./Layout/DefaultBodyPaper";
+import DefaultFootBar from "./Layout/DefaultFootBar";
 import GateBody from "./GateBody";
 
 export default function Gate() {
   return (
-    <div>
-      <HeadBar />
-      <BodyPaper InsideTag={<GateBody />} />
-      <FootBar />
-    </div>
+    <>
+      <DefaultHeadBar />
+      <DefaultBodyPaper Body={<GateBody />} />
+      <DefaultFootBar />
+    </>
   );
 }

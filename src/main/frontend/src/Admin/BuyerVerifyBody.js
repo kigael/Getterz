@@ -26,7 +26,6 @@ export default function BuyerVerifyBody(props) {
   const loading = () => dispatch(adminLoading());
   const done = () => dispatch(adminDone());
   const GetList = async () => {
-    setCalled(true);
     loading();
     await axios
       .get("/admin/buyer_verify", {
@@ -68,6 +67,7 @@ export default function BuyerVerifyBody(props) {
     [history]
   );
   if (!called) {
+    setCalled(true);
     GetList();
   }
   return (

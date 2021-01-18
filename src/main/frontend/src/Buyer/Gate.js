@@ -1,9 +1,9 @@
 import React, { useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
-import HeadBar from "../Layout/HeadBar";
-import BodyPaper from "../Layout/BodyPaper";
-import FootBar from "../Layout/FootBar";
+import BuyerHeadBar from "../Layout/BuyerHeadBar";
+import BuyerBodyPaper from "../Layout/BuyerBodyPaper";
+import BuyerFootBar from "../Layout/BuyerFootBar";
 import GateBody from "./GateBody";
 
 export default function Gate() {
@@ -17,10 +17,10 @@ export default function Gate() {
     redirecTo();
   }
   return (
-    <div>
-      <HeadBar Type="Buyer" />
-      <BodyPaper Type="Buyer" InsideTag={<GateBody />} />
-      <FootBar Type="Buyer" />
-    </div>
+    <>
+      <BuyerHeadBar />
+      <BuyerBodyPaper Body={<GateBody />} />
+      <BuyerFootBar />
+    </>
   );
 }
