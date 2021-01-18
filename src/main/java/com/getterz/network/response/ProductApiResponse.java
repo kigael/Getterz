@@ -49,4 +49,6 @@ public class ProductApiResponse {
 
     private String description;
 
+    private String profileImageName;
+
 }

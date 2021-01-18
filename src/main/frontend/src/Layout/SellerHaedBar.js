@@ -46,21 +46,21 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function HeadBar(props) {
+export default function SellerHeadBar(props) {
   const {
     adminLoading,
-    adminData,
+    admin,
     sellerLoading,
-    sellerData,
+    seller,
     buyerLoading,
-    buyerData,
+    buyer,
   } = useSelector((state) => ({
     adminLoading: state.AdminInfo.loading,
-    adminData: state.AdminInfo.header.data,
+    admin: state.AdminInfo.header.data,
     sellerLoading: state.SellerInfo.loading,
-    sellerData: state.SellerInfo.header.data,
+    seller: state.SellerInfo.header.data,
     buyerLoading: state.BuyerInfo.loading,
-    buyerData: state.BuyerInfo.header.data,
+    buyer: state.BuyerInfo.header.data,
   }));
   const classes = useStyles(props);
   return (
@@ -227,7 +227,7 @@ export default function HeadBar(props) {
                     </Typography>
                   </Link>
                 </Grid>
-                {buyerData.loading ? (
+                {buyerLoading ? (
                   <></>
                 ) : (
                   <Grid
@@ -243,8 +243,11 @@ export default function HeadBar(props) {
                       style={{ color: "inherit", textDecoration: "inherit" }}
                     >
                       <Avatar
-                        alt={buyerData.name}
-                        src="/static/images/profile_img/1.jpg"
+                        alt={buyer.name}
+                        src={
+                          "/upload/buyer/profile_image/" +
+                          buyer.profileImageName
+                        }
                       />
                     </Link>
                     <Link
@@ -252,7 +255,7 @@ export default function HeadBar(props) {
                       style={{ color: "inherit", textDecoration: "inherit" }}
                     >
                       <Typography variant="caption" className={classes.account}>
-                        {buyerData.emailAddress}
+                        {buyer.emailAddress}
                       </Typography>
                     </Link>
                   </Grid>

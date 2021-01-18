@@ -24,7 +24,6 @@ export default function VerifyEmailBody(props) {
   const loading = () => dispatch(buyerLoading());
   const done = () => dispatch(buyerDone());
   const Verify = async (message, setMessage, query) => {
-    setCalled(true);
     loading();
     await axios
       .get("/buyer/verify_email", {
@@ -47,6 +46,7 @@ export default function VerifyEmailBody(props) {
       });
   };
   if (!called) {
+    setCalled(true);
     Verify(message, setMessage, query);
   }
   return (

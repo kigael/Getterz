@@ -1,9 +1,9 @@
 import React, { useCallback } from "react";
 import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
-import HeadBar from "../Layout/HeadBar";
-import BodyPaper from "../Layout/BodyPaper";
-import FootBar from "../Layout/FootBar";
+import AdminHeadBar from "../Layout/AdminHeadBar";
+import AdminBodyPaper from "../Layout/AdminBodyPaper";
+import AdminFootBar from "../Layout/AdminFootBar";
 import BuyerVerifyBody from "./BuyerVerifyBody";
 
 export default function BuyerVerify() {
@@ -18,12 +18,9 @@ export default function BuyerVerify() {
   }
   return (
     <>
-      <HeadBar Type="Admin" />
-      <BodyPaper
-        Type="Admin"
-        InsideTag={<BuyerVerifyBody session={header.session} />}
-      />
-      <FootBar Type="Admin" />
+      <AdminHeadBar />
+      <AdminBodyPaper Body={<BuyerVerifyBody session={header.session} />} />
+      <AdminFootBar />
     </>
   );
 }

@@ -1,9 +1,9 @@
 import React, { useCallback } from "react";
 import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
-import HeadBar from "../Layout/HeadBar";
-import BodyPaper from "../Layout/BodyPaper";
-import FootBar from "../Layout/FootBar";
+import DefaultHeadBar from "../Layout/DefaultHeadBar";
+import DefaultBodyPaper from "../Layout/DefaultBodyPaper";
+import DefaultFootBar from "../Layout/DefaultFootBar";
 import SignupBody from "./SignupBody";
 
 export default function Signup() {
@@ -18,9 +18,9 @@ export default function Signup() {
   }
   return (
     <div>
-      <HeadBar Type="Admin" />
-      <BodyPaper Type="Admin" InsideTag={<SignupBody />} />
-      <FootBar Type="Admin" />
+      <DefaultHeadBar />
+      <DefaultBodyPaper Body={<SignupBody />} />
+      <DefaultFootBar />
     </div>
   );
 }

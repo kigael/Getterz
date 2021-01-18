@@ -1,8 +1,8 @@
 import React from "react";
 import qs from "qs";
-import HeadBar from "../Layout/HeadBar";
-import BodyPaper from "../Layout/BodyPaper";
-import FootBar from "../Layout/FootBar";
+import DefaultHeadBar from "../Layout/DefaultHeadBar";
+import DefaultBodyPaper from "../Layout/DefaultBodyPaper";
+import DefaultFootBar from "../Layout/DefaultFootBar";
 import LoginBody from "./LoginBody";
 
 export default function Login({ location }) {
@@ -13,9 +13,9 @@ export default function Login({ location }) {
   if (query.session === undefined) {
     return (
       <>
-        <HeadBar />
-        <BodyPaper InsideTag={<LoginBody />} />
-        <FootBar />
+        <DefaultHeadBar />
+        <DefaultBodyPaper InsideTag={<LoginBody />} />
+        <DefaultFootBar />
       </>
     );
   } else {

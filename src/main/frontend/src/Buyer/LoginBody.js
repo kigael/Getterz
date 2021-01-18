@@ -75,16 +75,14 @@ export default function LoginBody() {
       .then(function (response) {
         if (response.data.resultCode === "OK") {
           login(response.data);
+          done();
           redirecTo();
-        } else if (response.data.description === "BUYER NOT FOUND") {
-          setError("BUYER NOT FOUND");
-        } else if (response.data.description === "PASSWORD MISMATCH") {
-          setError("PASSWORD MISMATCH");
+        } else if (response.data.resultCode === "ERROR") {
+          setError(response.data.description);
+          done();
         }
-        done();
       })
       .catch(function (error) {
-        console.log(error);
         done();
       });
   };
