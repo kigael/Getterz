@@ -1,19 +1,28 @@
 package com.getterz.service.sellerApi;
 
 import com.getterz.crypt.Cryptor;
+import com.getterz.domain.enumclass.UserType;
 import com.getterz.domain.model.Seller;
 import com.getterz.domain.repository.SellerRepository;
+import com.getterz.format.check.FormatCheck;
+import com.getterz.mail.GetterzMailService;
 import com.getterz.network.Header;
 import com.getterz.network.request.SellerApiRequest;
 import com.getterz.network.response.SellerApiResponse;
 import com.getterz.network.session.SessionApi;
 import com.getterz.service.AuthenticationService;
-import com.getterz.service.adminApi.SellerApiLogicService;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
 
 @Service
@@ -21,22 +30,147 @@ import java.util.Optional;
 public class SellerAuthenticationLogicService extends AuthenticationService<SellerApiRequest, SellerApiResponse, Seller> {
 
     @Autowired
-    private final SellerApiLogicService sellerApiLogicService;
     private final SellerRepository sellerRepository;
+    private final GetterzMailService getterzMailService;
 
     @Override
     public Header<SellerApiResponse> signup(Header<SellerApiRequest> request) {
-        return sellerApiLogicService.create(request);
+        String transactionType = "SELLER SIGNUP";
+        if(request==null) return Header.ERROR(transactionType,"NO HEADER",null);
+        else if(request.getData()==null) return Header.ERROR(transactionType,"NO DATA",null);
+        else{
+            SellerApiRequest body = request.getData();
+            StringBuilder description = new StringBuilder();
+            Boolean isGreen = Boolean.TRUE;
+            if(body.getName()==null){
+                description.append("NO NAME\n");
+                isGreen=Boolean.FALSE;
+            }
+            if(body.getPassword()==null){
+                description.append("NO PASSWORD\n");
+                isGreen=Boolean.FALSE;
+            }
+            if(body.getEmergencyPassword()==null){
+                description.append("NO EMERGENCY PASSWORD\n");
+                isGreen=Boolean.FALSE;
+            }
+            if(body.getGender()==null){
+                description.append("NO GENDER\n");
+                isGreen=Boolean.FALSE;
+            }
+            if(body.getDateOfBirth()==null){
+                description.append("NO DATE OF BIRTH\n");
+                isGreen=Boolean.FALSE;
+            }
+            if(body.getEmailAddress()==null){
+                description.append("NO EMAIL ADDRESS\n");
+                isGreen=Boolean.FALSE;
+            }
+            if(body.getCellNumber()==null){
+                description.append("NO CELL NUMBER\n");
+                isGreen=Boolean.FALSE;
+            }
+            if(body.getLatitude()==null||body.getLongitude()==null){
+                description.append("NO COORDINATE\n");
+                isGreen=Boolean.FALSE;
+            }
+            if(body.getAddress()==null){
+                description.append("NO ADDRESS\n");
+                isGreen=Boolean.FALSE;
+            }
+            if(body.getVerifyImageName()==null){
+                description.append("NO VERIFY IMAGE\n");
+                isGreen=Boolean.FALSE;
+            }
+            if(isGreen){
+                if(FormatCheck.name(body.getName())) return Header.ERROR(transactionType,"INVALID NAME",SessionApi.updateSession(request.getSession()));
+
+                if(sellerRepository.findByEmailAddressAndEmailCertifiedTrue(Cryptor.ENCRYPT(body.getEmailAddress())).isPresent()) return Header.ERROR(transactionType,"DUPLICATE EMAIL ADDRESS",SessionApi.updateSession(request.getSession()));
+
+                if(FormatCheck.password(body.getPassword())) return Header.ERROR(transactionType,"INVALID PASSWORD",SessionApi.updateSession(request.getSession()));
+
+                if(FormatCheck.password(body.getEmergencyPassword())) return Header.ERROR(transactionType,"INVALID EMERGENCY PASSWORD",SessionApi.updateSession(request.getSession()));
+
+                if(body.getPassword().equals(body.getEmergencyPassword())) return Header.ERROR(transactionType,"DUPLICATE PASSWORD",SessionApi.updateSession(request.getSession()));
+
+                if(FormatCheck.emailAddress(body.getEmailAddress())) return Header.ERROR(transactionType,"INVALID EMAIL ADDRESS",SessionApi.updateSession(request.getSession()));
+
+                if(FormatCheck.cellNumber(body.getCellNumber())) return Header.ERROR(transactionType,"INVALID CELL NUMBER",SessionApi.updateSession(request.getSession()));
+
+                if(FormatCheck.coordinate(body.getLatitude(),body.getLongitude())) return Header.ERROR(transactionType,"INVALID COORDINATE",SessionApi.updateSession(request.getSession()));
+
+                if(FormatCheck.address(body.getAddress())) return Header.ERROR(transactionType,"INVALID ADDRESS",SessionApi.updateSession(request.getSession()));
+
+                Seller seller = sellerRepository.save(Seller.builder()
+                        .name(Cryptor.ENCRYPT(body.getName()))
+                        .password(Cryptor.ENCRYPT(body.getPassword()))
+                        .emergencyPassword(Cryptor.ENCRYPT(body.getEmergencyPassword()))
+                        .gender(body.getGender())
+                        .dateOfBirth(body.getDateOfBirth())
+                        .emailAddress(Cryptor.ENCRYPT(body.getEmailAddress()))
+                        .emailCertified(false)
+                        .cellNumber(Cryptor.ENCRYPT(body.getCellNumber()))
+                        .latitude(body.getLatitude())
+                        .longitude(body.getLongitude())
+                        .address(Cryptor.ENCRYPT(body.getAddress()))
+                        .soldAmount(BigDecimal.ZERO)
+                        .adminCertified(false)
+                        .verifyImageName(Cryptor.ENCRYPT(body.getVerifyImageName()))
+                        .profileImageName(Cryptor.ENCRYPT(body.getProfileImageName()))
+                        .build());
+
+                try{
+                    getterzMailService.sendSellerEmailVerification(body.getEmailAddress(),Cryptor.ENCRYPT(seller.getId()+"+"+seller.getEmailAddress()+"+"+ UserType.SELLER.toString()));
+                }catch(Exception e) {
+                    return Header.ERROR(transactionType, "INVALID EMAIL ADDRESS", SessionApi.updateSession(request.getSession()));
+                }
+
+                return Header.OK(transactionType, null);
+            }
+            else{
+                return Header.ERROR(transactionType, description.substring(0,description.length()-1),null);
+            }
+        }
     }
 
     @Override
     public Header<SellerApiResponse> verifyImageUpload(MultipartFile verifyImage, String fileName) {
-        return null;
+        String transactionType = "SELLER VERIFY IMAGE UPLOAD";
+        if(verifyImage==null) return Header.ERROR(transactionType,"NO SELLER VERIFY IMAGE",null);
+        else if(fileName==null) return Header.ERROR(transactionType,"NO FILE NAME",null);
+        else {
+            String dir = System.getProperty("user.dir") + "/upload/seller/verify_image/";
+            makeDirectoryIfNotExist(dir);
+            String name = fileName.concat(".").concat(FilenameUtils.getExtension(verifyImage.getOriginalFilename()));
+            Path fileNamePath = Paths.get(dir,name);
+            try {
+                Files.write(fileNamePath, verifyImage.getBytes());
+            } catch (IOException e) {
+                e.printStackTrace();
+                return Header.ERROR(transactionType,"INVALID SELLER VERIFY IMAGE",null);
+            }
+            return Header.OK(transactionType,name,null);
+        }
     }
 
     @Override
     public Header<SellerApiResponse> profileImageUpload(MultipartFile profileImage, String fileName) {
-        return null;
+        String transactionType = "SELLER PROFILE IMAGE UPLOAD";
+        if(profileImage==null) return Header.ERROR(transactionType,"NO PROFILE IMAGE",null);
+        else if(fileName==null) return Header.ERROR(transactionType,"NO FILE NAME",null);
+        else {
+            String dir = System.getProperty("user.dir") + "/upload/seller/profile_image/";
+            makeDirectoryIfNotExist(dir);
+            String name = fileName.concat(".").concat(FilenameUtils.getExtension(profileImage.getOriginalFilename()));
+            Path fileNamePath = Paths.get(dir,name);
+            try {
+                Files.write(fileNamePath, profileImage.getBytes());
+            } catch (IOException e) {
+                e.printStackTrace();
+                return Header.ERROR(transactionType,"INVALID PROFILE IMAGE",null);
+            }
+            return Header.OK(transactionType,name,null);
+        }
     }
 
     @Override
@@ -57,7 +191,7 @@ public class SellerAuthenticationLogicService extends AuthenticationService<Sell
                 isGreen=Boolean.FALSE;
             }
             if(isGreen){
-                Optional<Seller> seller = sellerRepository.findByEmailAddress(Cryptor.ENCRYPT(body.getEmailAddress()));
+                Optional<Seller> seller = sellerRepository.findByEmailAddressAndAdminCertifiedTrue(Cryptor.ENCRYPT(body.getEmailAddress()));
                 if(seller.isEmpty()) return Header.ERROR(transactionType,"SELLER NOT FOUND",null);
 
                 if(body.getPassword().equals(Cryptor.DECRYPT(seller.get().getPassword()))) return Header.OK(transactionType,response(seller.get()), SessionApi.startSession(seller.get()));
@@ -89,7 +223,21 @@ public class SellerAuthenticationLogicService extends AuthenticationService<Sell
 
     @Override
     public Header<SellerApiResponse> verifyEmail(String token) {
-        return null;
+        token=Cryptor.DECRYPT(token);
+        String transactionType = "SELLER EMAIL VERIFICATION";
+        try{
+            String[] tokens = token.split("\\+");
+            if(!tokens[2].equals(UserType.SELLER.toString())) return Header.ERROR(transactionType, "INVALID TOKEN", null);
+            Optional<Seller> seller = sellerRepository.findById(Long.parseLong(tokens[0]));
+            if(seller.isEmpty()) return Header.ERROR(transactionType, "INVALID TOKEN", null);
+            else if(!seller.get().getEmailAddress().equals(tokens[1])) return Header.ERROR(transactionType, "INVALID TOKEN", null);
+            sellerRepository.save(seller.get().setEmailCertified(true));
+            sellerRepository.deleteAll(sellerRepository.findByEmailAddressAndEmailCertifiedFalse(seller.get().getEmailAddress()));
+            return Header.OK(transactionType,null);
+        }catch (Exception e) {
+            e.printStackTrace();
+            return Header.ERROR(transactionType, "INVALID TOKEN", null);
+        }
     }
 
     private SellerApiResponse response(Seller seller){
@@ -107,9 +255,15 @@ public class SellerAuthenticationLogicService extends AuthenticationService<Sell
                 .latitude(seller.getLatitude())
                 .longitude(seller.getLongitude())
                 .address(seller.getAddress())
-                .backAccount(seller.getBackAccount())
                 .soldAmount(seller.getSoldAmount())
                 .build();
+    }
+
+    private void makeDirectoryIfNotExist(String imageDirectory) {
+        File directory = new File(imageDirectory);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
     }
 
 }

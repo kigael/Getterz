@@ -71,14 +71,10 @@ public class SellerApiLogicService extends CrudService<SellerApiRequest, SellerA
                 description.append("NO ADDRESS\n");
                 isGreen=Boolean.FALSE;
             }
-            if(body.getCryptoWallet()==null){
-                description.append("NO CRYPTO WALLET\n");
-                isGreen=Boolean.FALSE;
-            }
             if(isGreen){
                 if(FormatCheck.name(body.getName())) return Header.ERROR(transactionType,"INVALID NAME",SessionApi.updateSession(request.getSession()));
 
-                if(sellerRepository.findByEmailAddress(Cryptor.ENCRYPT(body.getEmailAddress())).isPresent()) return Header.ERROR(transactionType,"DUPLICATE EMAIL ADDRESS",SessionApi.updateSession(request.getSession()));
+                if(sellerRepository.findByEmailAddressAndEmailCertifiedTrue(Cryptor.ENCRYPT(body.getEmailAddress())).isPresent()) return Header.ERROR(transactionType,"DUPLICATE EMAIL ADDRESS",SessionApi.updateSession(request.getSession()));
 
                 if(FormatCheck.password(body.getPassword())) return Header.ERROR(transactionType,"INVALID PASSWORD",SessionApi.updateSession(request.getSession()));
 
@@ -94,8 +90,6 @@ public class SellerApiLogicService extends CrudService<SellerApiRequest, SellerA
 
                 if(FormatCheck.address(body.getAddress())) return Header.ERROR(transactionType,"INVALID ADDRESS",SessionApi.updateSession(request.getSession()));
 
-                if(FormatCheck.cryptoWallet(body.getCryptoWallet())) return Header.ERROR(transactionType,"INVALID CRYPTO WALLET",SessionApi.updateSession(request.getSession()));
-
                 return Header.OK(
                         transactionType,
                         response(Seller.builder()
@@ -109,7 +103,6 @@ public class SellerApiLogicService extends CrudService<SellerApiRequest, SellerA
                                 .latitude(body.getLatitude())
                                 .longitude(body.getLongitude())
                                 .address(Cryptor.ENCRYPT(body.getAddress()))
-                                .backAccount(Cryptor.ENCRYPT(body.getCryptoWallet()))
                                 .soldAmount(BigDecimal.ZERO)
                                 .build()),
                         SessionApi.updateSession(request.getSession()));
@@ -194,17 +187,13 @@ public class SellerApiLogicService extends CrudService<SellerApiRequest, SellerA
                 description.append("NO ADDRESS\n");
                 isGreen=Boolean.FALSE;
             }
-            if(body.getCryptoWallet()==null){
-                description.append("NO CRYPTO WALLET\n");
-                isGreen=Boolean.FALSE;
-            }
             if(isGreen){
                 Optional<Seller> seller = baseRepository.findById(body.getId());
                 if(seller.isEmpty()) return Header.ERROR(transactionType,"SELLER NOT FOUND",SessionApi.updateSession(request.getSession()));
 
                 if(FormatCheck.name(body.getName())) return Header.ERROR(transactionType,"INVALID NAME",SessionApi.updateSession(request.getSession()));
 
-                if(sellerRepository.findByEmailAddress(Cryptor.ENCRYPT(body.getEmailAddress())).isPresent()) return Header.ERROR(transactionType,"DUPLICATE EMAIL ADDRESS",SessionApi.updateSession(request.getSession()));
+                if(sellerRepository.findByEmailAddressAndAdminCertifiedTrue(Cryptor.ENCRYPT(body.getEmailAddress())).isPresent()) return Header.ERROR(transactionType,"DUPLICATE EMAIL ADDRESS",SessionApi.updateSession(request.getSession()));
 
                 if(FormatCheck.password(body.getPassword())) return Header.ERROR(transactionType,"INVALID PASSWORD",SessionApi.updateSession(request.getSession()));
 
@@ -220,8 +209,6 @@ public class SellerApiLogicService extends CrudService<SellerApiRequest, SellerA
 
                 if(FormatCheck.address(body.getAddress())) return Header.ERROR(transactionType,"INVALID ADDRESS",SessionApi.updateSession(request.getSession()));
 
-                if(FormatCheck.cryptoWallet(body.getCryptoWallet())) return Header.ERROR(transactionType,"INVALID CRYPTO WALLET",SessionApi.updateSession(request.getSession()));
-
                 return Header.OK(
                         transactionType,
                         response(seller.get()
@@ -234,9 +221,7 @@ public class SellerApiLogicService extends CrudService<SellerApiRequest, SellerA
                                 .setCellNumber(Cryptor.ENCRYPT(body.getCellNumber()))
                                 .setLatitude(body.getLatitude())
                                 .setLongitude(body.getLongitude())
-                                .setAddress(Cryptor.ENCRYPT(body.getAddress()))
-                                .setBackAccount(Cryptor.ENCRYPT(body.getCryptoWallet()))
-                                .setSoldAmount(Optional.ofNullable(body.getSold()).orElse(seller.get().getSoldAmount()))),
+                                .setAddress(Cryptor.ENCRYPT(body.getAddress()))),
                         SessionApi.updateSession(request.getSession()));
             }
             else{
@@ -286,7 +271,6 @@ public class SellerApiLogicService extends CrudService<SellerApiRequest, SellerA
                 .latitude(seller.getLatitude())
                 .longitude(seller.getLongitude())
                 .address(seller.getAddress())
-                .backAccount(seller.getBackAccount())
                 .soldAmount(seller.getSoldAmount())
                 .build();
         if(seller.getProducts()!=null){
@@ -317,7 +301,6 @@ public class SellerApiLogicService extends CrudService<SellerApiRequest, SellerA
                 .latitude(seller.getLatitude())
                 .longitude(seller.getLongitude())
                 .address(seller.getAddress())
-                .backAccount(seller.getBackAccount())
                 .soldAmount(seller.getSoldAmount())
                 .build();
     }

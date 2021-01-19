@@ -1,7 +1,5 @@
 import React from "react";
-import DefaultHeadBar from "../Layout/DefaultHeadBar";
-import DefaultBodyPaper from "../Layout/DefaultBodyPaper";
-import DefaultFootBar from "../Layout/DefaultFootBar";
+import { DefaultHeadBar, DefaultBodyPaper, DefaultFootBar } from "../Layout";
 import VerifyEmailBody from "./VerifyEmailBody";
 
 export default function VerifyEmail({ location }) {

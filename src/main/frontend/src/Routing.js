@@ -28,14 +28,25 @@ function Routing() {
           exact
         />
         <Route path="/admin/seller_verify" component={A.SellerVerify} exact />
+        <Route
+          path="/admin/seller_verify/:sellerId"
+          component={A.SellerVerifyCertify}
+          exact
+        />
         <Route path="/admin/buyer_refund" component={A.BuyerRefund} exact />
         <Route
           path="/admin/seller_withdraw"
           component={A.SellerWithdraw}
           exact
         />
-        <Route path="/seller" component={Gate} exact />
+        <Route path="/seller" component={S.Gate} exact />
+        <Route path="/seller/signup" component={S.Signup} exact />
+        <Route path="/seller/verify_email" component={S.VerifyEmail} exact />
         <Route path="/seller/login" component={S.Login} exact />
+        <Route path="/seller/product" component={S.Product} exact />
+        <Route path="/seller/order" component={S.Order} exact />
+        <Route path="/seller/withdraw" component={S.Withdraw} exact />
+        <Route path="/seller/manage" component={S.Manage} exact />
         <Route path="/buyer" component={B.Gate} exact />
         <Route path="/buyer/signup" component={B.Signup} exact />
         <Route path="/buyer/verify_email" component={B.VerifyEmail} exact />

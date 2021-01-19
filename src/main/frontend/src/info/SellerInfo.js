@@ -5,6 +5,8 @@ const SELLER_DONE = "SELLER_DONE";
 
 export const sellerLogin = (header) => ({ type: SELLER_LOGIN, header });
 export const sellerLogout = () => ({ type: SELLER_LOGOUT });
+export const sellerLoading = () => ({ type: SELLER_LOADING });
+export const sellerDone = () => ({ type: SELLER_DONE });
 
 const initialState = {
   header: {

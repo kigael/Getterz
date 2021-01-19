@@ -39,7 +39,7 @@ public class BuyerAuthenticationLogicService extends AuthenticationService<Buyer
 
     @Override
     public Header<BuyerApiResponse> signup(Header<BuyerApiRequest> request) {
-        String transactionType = "BUYER CREATE";
+        String transactionType = "BUYER SIGNUP";
         if(request==null) return Header.ERROR(transactionType,"NO HEADER",null);
         else if(request.getData()==null) return Header.ERROR(transactionType,"NO DATA",null);
         else{
@@ -97,7 +97,7 @@ public class BuyerAuthenticationLogicService extends AuthenticationService<Buyer
             if(isGreen){
                 if(FormatCheck.name(body.getName())) return Header.ERROR(transactionType,"INVALID NAME",SessionApi.updateSession(request.getSession()));
 
-                if(!buyerRepository.findByEmailAddressAndEmailCertified(Cryptor.ENCRYPT(body.getEmailAddress()),true).isEmpty()) return Header.ERROR(transactionType,"DUPLICATE EMAIL ADDRESS",SessionApi.updateSession(request.getSession()));
+                if(!buyerRepository.findByEmailAddressAndEmailCertifiedTrue(Cryptor.ENCRYPT(body.getEmailAddress())).isEmpty()) return Header.ERROR(transactionType,"DUPLICATE EMAIL ADDRESS",SessionApi.updateSession(request.getSession()));
 
                 if(FormatCheck.password(body.getPassword())) return Header.ERROR(transactionType,"INVALID PASSWORD",SessionApi.updateSession(request.getSession()));
 
@@ -259,7 +259,7 @@ public class BuyerAuthenticationLogicService extends AuthenticationService<Buyer
             if(buyer.isEmpty()) return Header.ERROR(transactionType, "INVALID TOKEN", null);
             else if(!buyer.get().getEmailAddress().equals(tokens[1])) return Header.ERROR(transactionType, "INVALID TOKEN", null);
             buyerRepository.save(buyer.get().setEmailCertified(true));
-            buyerRepository.deleteAll(buyerRepository.findByEmailAddressAndEmailCertified(buyer.get().getEmailAddress(),false));
+            buyerRepository.deleteAll(buyerRepository.findByEmailAddressAndEmailCertifiedFalse(buyer.get().getEmailAddress()));
             return Header.OK(transactionType,null);
         }catch (Exception e) {
             e.printStackTrace();

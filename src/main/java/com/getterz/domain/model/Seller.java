@@ -59,13 +59,15 @@ public class Seller {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "seller")
     private List<Product> products;
 
-    private String backAccount;                         // ENCRYPT
-
     private BigDecimal soldAmount;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "seller")
     private List<Purchase> purchases;
 
     private Boolean adminCertified;
+
+    private String verifyImageName;
+
+    private String profileImageName;
 
 }

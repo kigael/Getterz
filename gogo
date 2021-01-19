@@ -1,0 +1,5 @@
+#!/bin/zsh
+
+./gradlew bootJar
+
+java -jar ./build/libs/*

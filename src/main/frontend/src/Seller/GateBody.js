@@ -5,25 +5,25 @@ import Box from "@material-ui/core/Box";
 
 const useStyles = makeStyles((theme) => ({
   box: {
-    color: "#4fc3f7",
+    color: "#aed581",
   },
   hopeYouGet: {
     textAlign: "center",
-    color: theme.palette.primary.light,
+    color: theme.palette.success.light,
   },
   whatYouWant: {
     textAlign: "center",
-    color: theme.palette.primary.dark,
+    color: theme.palette.success.dark,
   },
   userName: {
     textAlign: "center",
-    color: theme.palette.primary.main,
+    color: theme.palette.success.main,
   },
 }));
 
 export default function GateBody() {
   const classes = useStyles();
-  const header = useSelector((state) => state.BuyerInfo.header);
+  const header = useSelector((state) => state.SellerInfo.header);
   return (
     <>
       {header.data.name ? (

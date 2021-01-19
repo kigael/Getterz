@@ -22,16 +22,22 @@ public class GetterzMailService {
     static final String SMTP_PASSWORD = "kenem-1257-";
     static final String HOST = "smtp.naver.com";
     static final int PORT = 465;
+    private final Properties props;
+    private final Session session;
+    private MimeMessage msg;
+
+    GetterzMailService(){
+        this.props = System.getProperties();
+        this.props.put("mail.smtp.host", HOST);
+        this.props.put("mail.smtp.port", PORT);
+        this.props.put("mail.smtp.auth", "true");
+        this.props.put("mail.smtp.ssl.enable", "true");
+        this.props.put("mail.smtp.ssl.trust", HOST);
+        this.session = Session.getDefaultInstance(this.props);
+        this.msg = new MimeMessage(this.session);
+    }
 
     public void sendBuyerEmailVerification(String emailAddress, String verification) throws UnsupportedEncodingException, MessagingException {
-        Properties props = System.getProperties();
-        props.put("mail.smtp.host", HOST);
-        props.put("mail.smtp.port", PORT);
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.ssl.enable", "true");
-        props.put("mail.smtp.ssl.trust", HOST);
-        Session session = Session.getDefaultInstance(props);
-        MimeMessage msg = new MimeMessage(session);
         msg.setFrom(new InternetAddress(FROM, FROMNAME));
         msg.setRecipient(Message.RecipientType.TO, new InternetAddress(emailAddress));
         msg.setSubject("Getterz Buyer Email Verification");
@@ -53,20 +59,54 @@ public class GetterzMailService {
     }
 
     public void sendBuyerAdminMessage(String emailAddress, String message) throws UnsupportedEncodingException, MessagingException {
-        Properties props = System.getProperties();
-        props.put("mail.smtp.host", HOST);
-        props.put("mail.smtp.port", PORT);
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.ssl.enable", "true");
-        props.put("mail.smtp.ssl.trust", HOST);
-        Session session = Session.getDefaultInstance(props);
-        MimeMessage msg = new MimeMessage(session);
         msg.setFrom(new InternetAddress(FROM, FROMNAME));
         msg.setRecipient(Message.RecipientType.TO, new InternetAddress(emailAddress));
         msg.setSubject("Getterz Buyer Admin Message");
         msg.setContent(String.join(
                 System.getProperty("line.separator"),
                 "<h1>Buyer Admin Message</h1>",
+                "<p>"+message+"</p>"),
+                "text/html;"
+        );
+        Transport transport = session.getTransport();
+        try {
+            transport.connect(HOST, SMTP_USERNAME, SMTP_PASSWORD);
+            transport.sendMessage(msg, msg.getAllRecipients());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            transport.close();
+        }
+    }
+
+    public void sendSellerEmailVerification(String emailAddress, String verification) throws UnsupportedEncodingException, MessagingException {
+        msg.setFrom(new InternetAddress(FROM, FROMNAME));
+        msg.setRecipient(Message.RecipientType.TO, new InternetAddress(emailAddress));
+        msg.setSubject("Getterz Seller Email Verification");
+        msg.setContent(String.join(
+                System.getProperty("line.separator"),
+                "<h1>Seller Email Verification Link</h1>",
+                "<a href=\"http://localhost/#/seller/verify_email?token="+URLEncoder.encode(verification,StandardCharsets.UTF_8)+"\">Verification Link</a>."),
+                "text/html;"
+        );
+        Transport transport = session.getTransport();
+        try {
+            transport.connect(HOST, SMTP_USERNAME, SMTP_PASSWORD);
+            transport.sendMessage(msg, msg.getAllRecipients());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            transport.close();
+        }
+    }
+
+    public void sendSellerAdminMessage(String emailAddress, String message) throws UnsupportedEncodingException, MessagingException {
+        msg.setFrom(new InternetAddress(FROM, FROMNAME));
+        msg.setRecipient(Message.RecipientType.TO, new InternetAddress(emailAddress));
+        msg.setSubject("Getterz Seller Admin Message");
+        msg.setContent(String.join(
+                System.getProperty("line.separator"),
+                "<h1>Seller Admin Message</h1>",
                 "<p>"+message+"</p>"),
                 "text/html;"
         );

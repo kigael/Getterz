@@ -4,9 +4,9 @@ import { useHistory } from "react-router-dom";
 import AdminHeadBar from "../Layout/AdminHeadBar";
 import AdminBodyPaper from "../Layout/AdminBodyPaper";
 import AdminFootBar from "../Layout/AdminFootBar";
-import SellerVerifyBody from "./SellerVerifyBody";
+import SellerVerifyCertifyBody from "./SellerVerifyCertifyBody";
 
-export default function SellerVerify() {
+export default function SellerVerifyCertify({ match }) {
   const { header, loading } = useSelector((state) => ({
     header: state.AdminInfo.header,
     loading: state.AdminInfo.loading,
@@ -19,7 +19,11 @@ export default function SellerVerify() {
   return (
     <>
       <AdminHeadBar />
-      <AdminBodyPaper Body={<SellerVerifyBody session={header.session} />} />
+      <AdminBodyPaper
+        Body={
+          <SellerVerifyCertifyBody session={header.session} match={match} />
+        }
+      />
       <AdminFootBar />
     </>
   );
