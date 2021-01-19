@@ -2,10 +2,13 @@ import React, { useCallback } from "react";
 import axios from "axios";
 import { Link, useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { buyerLogout, buyerLoading, buyerDone } from "../info/BuyerInfo";
+import { sellerLogout, sellerLoading, sellerDone } from "../info/SellerInfo";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import { useTheme } from "@material-ui/core/styles";
 import { makeStyles } from "@material-ui/core/styles";
+import RedeemIcon from "@material-ui/icons/Redeem";
+import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
+import LocalAtmIcon from "@material-ui/icons/LocalAtm";
 import BottomNavigation from "@material-ui/core/BottomNavigation";
 import BottomNavigationAction from "@material-ui/core/BottomNavigationAction";
 import Dialog from "@material-ui/core/Dialog";
@@ -14,172 +17,127 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Button from "@material-ui/core/Button";
-import ShoppingBasketIcon from "@material-ui/icons/ShoppingBasket";
-import SearchIcon from "@material-ui/icons/Search";
-import ShopIcon from "@material-ui/icons/Shop";
-import RateReviewIcon from "@material-ui/icons/RateReview";
-import StoreIcon from "@material-ui/icons/Store";
-import InfoIcon from "@material-ui/icons/Info";
 import AccountBoxIcon from "@material-ui/icons/AccountBox";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 
 const useStyles = makeStyles((theme) => ({
-  footBar: (props) => ({
-    background:
-      props.Type === "Buyer"
-        ? "#4fc3f7"
-        : props.Type === "Seller"
-        ? "#aed581"
-        : props.Type === "Admin"
-        ? "#ffeb3b"
-        : "#ed4b82",
+  footBar: {
+    background: "#aed581",
     width: "100%",
     position: "fixed",
     bottom: 0,
-  }),
+  },
+  logoutButton: {
+    color: "white",
+    backgroundColor: theme.palette.success.main,
+    "&:hover": {
+      backgroundColor: theme.palette.success.light,
+    },
+  },
 }));
 
-export default function SellerFootBar(props) {
-  const classes = useStyles(props);
-  const { sellerHeader, buyerHeader } = useSelector((state) => ({
-    sellerHeader: state.SellerInfo.header,
-    buyerHeader: state.BuyerInfo.header,
+export default function SellerFootBar() {
+  const classes = useStyles();
+  const { header } = useSelector((state) => ({
+    header: state.SellerInfo.header,
   }));
   const dispatch = useDispatch();
-  const bLogout = () => dispatch(buyerLogout());
-  const bLoading = () => dispatch(buyerLoading());
-  const bDone = () => dispatch(buyerDone());
+  const logout = () => dispatch(sellerLogout());
+  const loading = () => dispatch(sellerLoading());
+  const done = () => dispatch(sellerDone());
   const history = useHistory();
-  const bRedirecTo = useCallback(() => history.push("/"), [history]);
-  const buyerAPILogout = async (header) => {
-    bLoading();
+  const redirectTo = useCallback(() => history.push("/"), [history]);
+  const sellerAPILogout = async (header) => {
+    loading();
     await axios
-      .post("/buyer/logout", header)
+      .post("/seller/logout", header)
       .then(function (response) {
         if (response.data.resultCode === "OK") {
-          bLogout();
+          logout();
         } else if (response.data.description === "INVALID SESSION") {
-          //show that session is invalid
-          bLogout();
+          logout();
         }
       })
       .catch(function (error) {
-        console.log(error);
+        logout();
       });
-    bDone();
-    bRedirecTo();
+    done();
+    redirectTo();
   };
-  const [openBuyerLogout, setOpenBuyerLogout] = React.useState(false);
+  const [openSellerLogout, setOpenSellerLogout] = React.useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
-  const handleClickOpenBuyerLogout = () => {
-    setOpenBuyerLogout(true);
+  const handleClickOpenSellerLogout = () => {
+    setOpenSellerLogout(true);
   };
-  const handleCloseBuyerLogout = () => {
-    setOpenBuyerLogout(false);
+  const handleCloseSellerLogout = () => {
+    setOpenSellerLogout(false);
   };
-  switch (props.Type) {
-    case "Admin":
-      return (
-        <div>
-          <BottomNavigation showLabels className={classes.footBar}>
-            {"ADMIN"}
-          </BottomNavigation>
-        </div>
-      );
-    case "Seller":
-      return <div></div>;
-    case "Buyer":
-      return (
-        <div>
-          <BottomNavigation showLabels className={classes.footBar}>
-            <BottomNavigationAction
-              component={Link}
-              to="/buyer/search"
-              label="Search"
-              icon={<SearchIcon />}
-            />
-            <BottomNavigationAction
-              component={Link}
-              to="/buyer/purchase"
-              label="Purchase"
-              icon={<ShopIcon />}
-            />
-            <BottomNavigationAction
-              component={Link}
-              to="/buyer/review"
-              label="Review"
-              icon={<RateReviewIcon />}
-            />
-            <BottomNavigationAction
-              component={Link}
-              to="/buyer/manage"
-              label="Manage"
-              icon={<AccountBoxIcon />}
-            />
-            <BottomNavigationAction
-              onClick={handleClickOpenBuyerLogout}
-              label="Logout"
-              icon={<ExitToAppIcon />}
-            />
-          </BottomNavigation>
-          <Dialog
-            fullScreen={fullScreen}
-            open={openBuyerLogout}
-            onClose={handleCloseBuyerLogout}
+  return (
+    <div>
+      <BottomNavigation showLabels className={classes.footBar}>
+        <BottomNavigationAction
+          component={Link}
+          to="/seller/product"
+          label="Search"
+          icon={<RedeemIcon />}
+        />
+        <BottomNavigationAction
+          component={Link}
+          to="/seller/order"
+          label="Purchase"
+          icon={<ArrowForwardIcon />}
+        />
+        <BottomNavigationAction
+          component={Link}
+          to="/seller/withdraw"
+          label="Review"
+          icon={<LocalAtmIcon />}
+        />
+        <BottomNavigationAction
+          component={Link}
+          to="/seller/manage"
+          label="Manage"
+          icon={<AccountBoxIcon />}
+        />
+        <BottomNavigationAction
+          onClick={handleClickOpenSellerLogout}
+          label="Logout"
+          icon={<ExitToAppIcon />}
+        />
+      </BottomNavigation>
+      <Dialog
+        fullScreen={fullScreen}
+        open={openSellerLogout}
+        onClose={handleCloseSellerLogout}
+      >
+        <DialogTitle id="responsive-dialog-title">
+          {"Logout Confirmation"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            {header.data.name},{"Would you like to logout Getterz Seller?"}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            className={classes.logoutButton}
+            autoFocus
+            onClick={() => sellerAPILogout(header)}
+            color="primary"
           >
-            <DialogTitle id="responsive-dialog-title">
-              {"Logout Confirmation"}
-            </DialogTitle>
-            <DialogContent>
-              <DialogContentText>
-                {buyerHeader.data.name},
-                {"Would you like to logout Getterz Buyer?"}
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button
-                autoFocus
-                onClick={() => buyerAPILogout(buyerHeader)}
-                color="primary"
-              >
-                {"YES"}
-              </Button>
-              <Button
-                onClick={handleCloseBuyerLogout}
-                color="primary"
-                autoFocus
-              >
-                {"NO"}
-              </Button>
-            </DialogActions>
-          </Dialog>
-        </div>
-      );
-    default:
-      return (
-        <div>
-          <BottomNavigation showLabels className={classes.footBar}>
-            <BottomNavigationAction
-              component={Link}
-              to="/seller/login"
-              label="Sell"
-              icon={<StoreIcon />}
-            />
-            <BottomNavigationAction
-              component={Link}
-              to="/buyer/login"
-              label="Buy"
-              icon={<ShoppingBasketIcon />}
-            />
-            <BottomNavigationAction
-              component={Link}
-              to="/about"
-              label="About"
-              icon={<InfoIcon />}
-            />
-          </BottomNavigation>
-        </div>
-      );
-  }
+            {"YES"}
+          </Button>
+          <Button
+            className={classes.logoutButton}
+            onClick={handleCloseSellerLogout}
+            color="primary"
+            autoFocus
+          >
+            {"NO"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
+  );
 }

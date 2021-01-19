@@ -1,4 +1,8 @@
-import React from "react";
+import React, { useState, useCallback } from "react";
+import { useHistory } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { sellerLogin, sellerLoading, sellerDone } from "../info/SellerInfo";
+import axios from "axios";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
@@ -16,20 +20,93 @@ const useStyles = makeStyles((theme) => ({
   },
   avatar: {
     margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
+    backgroundColor: theme.palette.success.main,
   },
   form: {
-    width: "100%", // Fix IE 11 issue.
+    width: "100%",
     marginTop: theme.spacing(1),
+  },
+  inputField: {
+    "& label.Mui-focused": {
+      color: theme.palette.success.dark,
+    },
+    "& .MuiInput-underline:after": {
+      borderBottomColor: theme.palette.success.dark,
+    },
+    "& .MuiOutlinedInput-root": {
+      "&.Mui-focused fieldset": {
+        borderColor: theme.palette.success.dark,
+      },
+    },
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
+    color: "white",
+    backgroundColor: theme.palette.success.main,
+    "&:hover": {
+      backgroundColor: theme.palette.success.light,
+    },
+  },
+  error: {
+    textAlign: "center",
+    color: "#ff5722",
+  },
+  link: {
+    color: theme.palette.success.main,
   },
 }));
 
 export default function LoginBody() {
   const classes = useStyles();
-
+  const [inputs, setInputs] = useState({
+    email: "",
+    password: "",
+    error: "",
+  });
+  const { email, password, error } = inputs;
+  const onChange = (e) => {
+    setInputs({
+      ...inputs,
+      [e.target.name]: e.target.value,
+    });
+  };
+  const dispatch = useDispatch();
+  const login = (header) => dispatch(sellerLogin(header));
+  const loading = () => dispatch(sellerLoading());
+  const done = () => dispatch(sellerDone());
+  const history = useHistory();
+  const redirecTo = useCallback(() => history.push("/seller"), [history]);
+  const Login = async (inputs, setInputs) => {
+    const setError = (e) => {
+      setInputs({
+        ...inputs,
+        error: e,
+      });
+    };
+    loading();
+    await axios
+      .post("/seller/login", {
+        transactionTime: "",
+        transactionType: "SELLER LOGIN",
+        data: {
+          emailAddress: inputs.email,
+          password: inputs.password,
+        },
+      })
+      .then(function (response) {
+        if (response.data.resultCode === "OK") {
+          login(response.data);
+          done();
+          redirecTo();
+        } else if (response.data.resultCode === "ERROR") {
+          setError(response.data.description);
+          done();
+        }
+      })
+      .catch(function (error) {
+        done();
+      });
+  };
   return (
     <Grid container xs={12} sm={12} direction="row" justify="center">
       <Grid item xs={0} sm={4} />
@@ -49,7 +126,9 @@ export default function LoginBody() {
         </Typography>
         <form className={classes.form} noValidate>
           <TextField
-            color="secondary"
+            className={classes.inputField}
+            value={email}
+            onChange={onChange}
             variant="outlined"
             margin="normal"
             required
@@ -61,7 +140,9 @@ export default function LoginBody() {
             autoFocus
           />
           <TextField
-            color="secondary"
+            className={classes.inputField}
+            value={password}
+            onChange={onChange}
             variant="outlined"
             margin="normal"
             required
@@ -72,24 +153,43 @@ export default function LoginBody() {
             id="password"
             autoComplete="current-password"
           />
+          {error === "SELLER NOT FOUND" ? (
+            <Typography className={classes.error} variant="body1">
+              ! SELLER NOT FOUND !
+            </Typography>
+          ) : error === "PASSWORD MISMATCH" ? (
+            <Typography className={classes.error} variant="body1">
+              ! PASSWORD MISMATCH !
+            </Typography>
+          ) : (
+            <></>
+          )}
           <Button
-            type="submit"
             fullWidth
             variant="contained"
-            color="secondary"
+            color="primary"
+            onClick={() => Login(inputs, setInputs)}
             className={classes.submit}
           >
             Login
           </Button>
           <Grid container>
             <Grid item xs>
-              <Link href="#" variant="body2" color="secondary">
+              <Link
+                href="/#/seller/forgot"
+                variant="body2"
+                className={classes.link}
+              >
                 {"Forgot password?"}
               </Link>
             </Grid>
             <Grid item>
-              <Link href="#" variant="body2" color="secondary">
-                {"Not a buyer yet? Sign Up!"}
+              <Link
+                href="/#/seller/signup"
+                variant="body2"
+                className={classes.link}
+              >
+                {"Not a seller yet? Sign Up!"}
               </Link>
             </Grid>
           </Grid>

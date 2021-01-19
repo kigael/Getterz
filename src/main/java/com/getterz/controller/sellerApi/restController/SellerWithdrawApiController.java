@@ -1,0 +1,9 @@
+package com.getterz.controller.sellerApi.restController;
+
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/seller")
+public class SellerWithdrawApiController {
+}

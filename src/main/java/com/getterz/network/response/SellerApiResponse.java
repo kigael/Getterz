@@ -45,12 +45,12 @@ public class SellerApiResponse {
 
     private List<ProductApiResponse> products;
 
-    private String backAccount;
-
-    private BigDecimal fee;
-
     private BigDecimal soldAmount;
 
     private List<PurchaseApiResponse> orders;
+
+    private String verifyImageName;
+
+    private String profileImageName;
 
 }

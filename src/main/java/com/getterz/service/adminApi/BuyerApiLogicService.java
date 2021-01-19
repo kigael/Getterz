@@ -83,7 +83,7 @@ public class BuyerApiLogicService extends CrudService<BuyerApiRequest, BuyerApiR
             if(isGreen){
                 if(FormatCheck.name(body.getName())) return Header.ERROR(transactionType,"INVALID NAME",SessionApi.updateSession(request.getSession()));
 
-                if(!buyerRepository.findByEmailAddressAndEmailCertified(Cryptor.ENCRYPT(body.getEmailAddress()),true).isEmpty()) return Header.ERROR(transactionType,"DUPLICATE EMAIL ADDRESS",SessionApi.updateSession(request.getSession()));
+                if(!buyerRepository.findByEmailAddressAndEmailCertifiedTrue(Cryptor.ENCRYPT(body.getEmailAddress())).isEmpty()) return Header.ERROR(transactionType,"DUPLICATE EMAIL ADDRESS",SessionApi.updateSession(request.getSession()));
 
                 if(FormatCheck.password(body.getPassword())) return Header.ERROR(transactionType,"INVALID PASSWORD",SessionApi.updateSession(request.getSession()));
 
@@ -221,7 +221,7 @@ public class BuyerApiLogicService extends CrudService<BuyerApiRequest, BuyerApiR
 
                 if(FormatCheck.name(body.getName())) return Header.ERROR(transactionType,"INVALID NAME",SessionApi.updateSession(request.getSession()));
 
-                if(!buyerRepository.findByEmailAddressAndEmailCertified(Cryptor.ENCRYPT(body.getEmailAddress()),true).isEmpty()) return Header.ERROR(transactionType,"DUPLICATE PROFILE NAME",SessionApi.updateSession(request.getSession()));
+                if(!buyerRepository.findByEmailAddressAndEmailCertifiedTrue(Cryptor.ENCRYPT(body.getEmailAddress())).isEmpty()) return Header.ERROR(transactionType,"DUPLICATE PROFILE NAME",SessionApi.updateSession(request.getSession()));
 
                 if(FormatCheck.password(body.getPassword())) return Header.ERROR(transactionType,"INVALID PASSWORD",SessionApi.updateSession(request.getSession()));
 

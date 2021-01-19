@@ -4,12 +4,12 @@ import { useHistory } from "react-router-dom";
 import DefaultHeadBar from "../Layout/DefaultHeadBar";
 import DefaultBodyPaper from "../Layout/DefaultBodyPaper";
 import DefaultFootBar from "../Layout/DefaultFootBar";
-import LoginBody from "./LoginBody";
+import SignupBody from "./SignupBody";
 
-export default function Login() {
-  const { loading, header } = useSelector((state) => ({
-    loading: state.SellerInfo.loading,
+export default function Signup() {
+  const { header, loading } = useSelector((state) => ({
     header: state.SellerInfo.header,
+    loading: state.SellerInfo.loading,
   }));
   const history = useHistory();
   const redirecTo = useCallback(() => history.push("/seller"), [history]);
@@ -17,10 +17,10 @@ export default function Login() {
     redirecTo();
   }
   return (
-    <>
+    <div>
       <DefaultHeadBar />
-      <DefaultBodyPaper Body={<LoginBody />} />
+      <DefaultBodyPaper Body={<SignupBody />} />
       <DefaultFootBar />
-    </>
+    </div>
   );
 }

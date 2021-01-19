@@ -2,14 +2,19 @@ package com.getterz.service.adminApi;
 
 import com.getterz.crypt.Cryptor;
 import com.getterz.domain.enumclass.UserType;
-import com.getterz.domain.model.*;
+import com.getterz.domain.model.Admin;
+import com.getterz.domain.model.Buyer;
+import com.getterz.domain.model.Job;
+import com.getterz.domain.model.Seller;
 import com.getterz.domain.repository.AdminRepository;
 import com.getterz.domain.repository.BuyerRepository;
+import com.getterz.domain.repository.SellerRepository;
 import com.getterz.format.check.FormatCheck;
 import com.getterz.mail.GetterzMailService;
 import com.getterz.network.Header;
 import com.getterz.network.request.AdminApiRequest;
 import com.getterz.network.request.BuyerVerifyApiRequest;
+import com.getterz.network.request.SellerVerifyApiRequest;
 import com.getterz.network.response.*;
 import com.getterz.network.session.Session;
 import com.getterz.network.session.SessionApi;
@@ -33,6 +38,7 @@ public class AdminApiLogicService {
     private final Environment env;
     private final AdminRepository adminRepository;
     private final BuyerRepository buyerRepository;
+    private final SellerRepository sellerRepository;
     private final GetterzMailService getterzMailService;
 
     public Header<AdminApiResponse> signup(Header<AdminApiRequest> request) {
@@ -190,6 +196,63 @@ public class AdminApiLogicService {
         }
     }
 
+    public Header<SellerVerifyApiResponse> sellerVerifyGetList(String session, Pageable pageable) {
+        String transactionType="ADMIN SELLER VERIFY LIST";
+        if(session==null) return Header.ERROR(transactionType,"NO SESSION",null);
+        else if(!SessionApi.checkSession(session)) return Header.ERROR(transactionType,"INVALID SESSION",null);
+        else{
+            Session s = Session.toSession(Cryptor.DECRYPT(session));
+            if(s==null||s.getUserType()==null||s.getUserType()!= UserType.ADMIN) return Header.ERROR(transactionType,"INVALID SESSION",null);
+            Page<Seller> sellers = sellerRepository.findByEmailCertifiedTrueAndAdminCertifiedFalseOrderByDateOfJoinAsc(pageable);
+            SellerVerifyApiResponse responseData = new SellerVerifyApiResponse();
+            List<SellerApiResponse> sellerList = sellers.stream()
+                    .map(AdminApiLogicService::Body)
+                    .collect(Collectors.toList());
+            responseData
+                    .setSellers(sellerList)
+                    .setCurrentPage(sellers.getNumber())
+                    .setCurrentElements(sellers.getNumberOfElements())
+                    .setTotalPage(sellers.getTotalPages())
+                    .setTotalElements(sellers.getTotalElements());
+            return Header.OK(transactionType,responseData,SessionApi.updateSession(session));
+        }
+    }
+
+    public Header<SellerApiResponse> sellerVerifyGetSeller(String session, Long id) {
+        String transactionType="ADMIN SELLER VERIFY ITEM";
+        if(session==null) return Header.ERROR(transactionType,"NO SESSION",null);
+        else if(!SessionApi.checkSession(session)) return Header.ERROR(transactionType,"INVALID SESSION",null);
+        else{
+            Session s = Session.toSession(Cryptor.DECRYPT(session));
+            if(s==null||s.getUserType()==null||s.getUserType()!= UserType.ADMIN) return Header.ERROR(transactionType,"INVALID SESSION",null);
+            Optional<Seller> seller = sellerRepository.findById(id);
+            if(seller.isEmpty()) return Header.ERROR(transactionType,"SELLER NOT FOUND",SessionApi.updateSession(session));
+            return Header.OK(transactionType,response(seller.get()),SessionApi.updateSession(session));
+        }
+    }
+
+    public Header<SellerApiResponse> sellerVerify(Header<SellerVerifyApiRequest> request) {
+        String transactionType="ADMIN SELLER VERIFY";
+        if(request==null) return Header.ERROR(transactionType,"NO HEADER",null);
+        else if(request.getSession()==null) return Header.ERROR(transactionType,"NO SESSION",null);
+        else if(!SessionApi.checkSession(request.getSession())) return Header.ERROR(transactionType,"INVALID SESSION",null);
+        else{
+            Session s = Session.toSession(Cryptor.DECRYPT(request.getSession()));
+            if(s==null||s.getUserType()==null||s.getUserType()!= UserType.ADMIN) return Header.ERROR(transactionType,"INVALID SESSION",null);
+            SellerVerifyApiRequest body = request.getData();
+            Optional<Seller> seller = sellerRepository.findById(body.getSellerId());
+            if(seller.isEmpty()) return Header.ERROR(transactionType,"SELLER NOT FOUND",SessionApi.updateSession(request.getSession()));
+            try{
+                getterzMailService.sendSellerAdminMessage(Cryptor.DECRYPT(seller.get().getEmailAddress()),body.getMessage());
+            }catch (Exception e){
+                return Header.ERROR(transactionType,"EMAIL SEND FAIL",SessionApi.updateSession(request.getSession()));
+            }
+            if(body.getCertify()) sellerRepository.save(seller.get().setAdminCertified(true));
+            else sellerRepository.delete(seller.get());
+            return Header.OK(transactionType,SessionApi.updateSession(request.getSession()));
+        }
+    }
+
     private BuyerApiResponse response(Buyer buyer){
         BuyerApiResponse body = BuyerApiResponse.builder()
                 .id(buyer.getId())
@@ -214,6 +277,24 @@ public class AdminApiLogicService {
         return body;
     }
 
+    private SellerApiResponse response(Seller seller){
+        SellerApiResponse body = SellerApiResponse.builder()
+                .id(seller.getId())
+                .name(Cryptor.DECRYPT(seller.getName()))
+                .gender(seller.getGender())
+                .dateOfBirth(seller.getDateOfBirth())
+                .dateOfJoin(seller.getDateOfJoin())
+                .emailAddress(Cryptor.DECRYPT(seller.getEmailAddress()))
+                .cellNumber(Cryptor.DECRYPT(seller.getCellNumber()))
+                .latitude(seller.getLatitude())
+                .longitude(seller.getLongitude())
+                .address(Cryptor.DECRYPT(seller.getAddress()))
+                .verifyImageName(Cryptor.DECRYPT(seller.getVerifyImageName()))
+                .profileImageName(Cryptor.DECRYPT(seller.getProfileImageName()))
+                .build();
+        return body;
+    }
+
     public static BuyerApiResponse Body(Buyer buyer){
         return BuyerApiResponse.builder()
                 .id(buyer.getId())
@@ -221,6 +302,18 @@ public class AdminApiLogicService {
                 .dateOfJoin(buyer.getDateOfJoin())
                 .emailAddress(Cryptor.DECRYPT(buyer.getEmailAddress()))
                 .cellNumber(Cryptor.DECRYPT(buyer.getCellNumber()))
+                .profileImageName(Cryptor.DECRYPT(buyer.getProfileImageName()))
+                .build();
+    }
+
+    public static SellerApiResponse Body(Seller seller){
+        return SellerApiResponse.builder()
+                .id(seller.getId())
+                .name(Cryptor.DECRYPT(seller.getName()))
+                .dateOfJoin(seller.getDateOfJoin())
+                .emailAddress(Cryptor.DECRYPT(seller.getEmailAddress()))
+                .cellNumber(Cryptor.DECRYPT(seller.getCellNumber()))
+                .profileImageName(Cryptor.DECRYPT(seller.getProfileImageName()))
                 .build();
     }
 

@@ -12,7 +12,9 @@ import java.util.Optional;
 @Repository
 public interface BuyerRepository extends JpaRepository<Buyer,Long> {
 
-    List<Buyer> findByEmailAddressAndEmailCertified(String emailAddress, Boolean emailCertified);
+    Optional<Buyer> findByEmailAddressAndEmailCertifiedTrue(String emailAddress);
+
+    List<Buyer> findByEmailAddressAndEmailCertifiedFalse(String emailAddress);
 
     Optional<Buyer> findByEmailAddressAndAdminCertifiedTrue(String emailAddress);
 

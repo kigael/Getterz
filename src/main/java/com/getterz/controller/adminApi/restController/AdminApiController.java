@@ -3,9 +3,8 @@ package com.getterz.controller.adminApi.restController;
 import com.getterz.network.Header;
 import com.getterz.network.request.AdminApiRequest;
 import com.getterz.network.request.BuyerVerifyApiRequest;
-import com.getterz.network.response.AdminApiResponse;
-import com.getterz.network.response.BuyerApiResponse;
-import com.getterz.network.response.BuyerVerifyApiResponse;
+import com.getterz.network.request.SellerVerifyApiRequest;
+import com.getterz.network.response.*;
 import com.getterz.service.adminApi.AdminApiLogicService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +53,25 @@ public class AdminApiController {
     @PostMapping("buyer_verify")
     public Header<BuyerApiResponse> buyerVerify(@RequestBody Header<BuyerVerifyApiRequest> request){
         return adminApiLogicService.buyerVerify(request);
+    }
+
+    @GetMapping("seller_verify")
+    public Header<SellerVerifyApiResponse> sellerVerifyGetList(
+            @RequestParam(value="getterz_session") String session,
+            @PageableDefault(sort = { "id" }, direction = Sort.Direction.ASC) Pageable pageable){
+        return adminApiLogicService.sellerVerifyGetList(session,pageable);
+    }
+
+    @GetMapping("seller_verify/{id}")
+    public Header<SellerApiResponse> sellerVerifyGetSeller(
+            @RequestParam(value="getterz_session") String session,
+            @PathVariable("id") Long id){
+        return adminApiLogicService.sellerVerifyGetSeller(session,id);
+    }
+
+    @PostMapping("seller_verify")
+    public Header<SellerApiResponse> sellerVerify(@RequestBody Header<SellerVerifyApiRequest> request){
+        return adminApiLogicService.sellerVerify(request);
     }
 
 }
