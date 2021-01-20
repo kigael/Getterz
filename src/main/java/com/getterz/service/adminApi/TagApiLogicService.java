@@ -39,7 +39,7 @@ public class TagApiLogicService extends CrudService<TagApiRequest, TagApiRespons
             if(isGreen){
                 if(FormatCheck.tagName(body.getName())) return Header.ERROR(transactionType,"INVALID NAME",SessionApi.updateSession(request.getSession()));
 
-                if(tagRepository.findByName(body.getName()).isPresent()) return Header.ERROR(transactionType,"DUPLICATE NAME",SessionApi.updateSession(request.getSession()));
+                if(tagRepository.findFirstByName(body.getName()).isPresent()) return Header.ERROR(transactionType,"DUPLICATE NAME",SessionApi.updateSession(request.getSession()));
 
                 return Header.OK(
                         transactionType,
@@ -102,7 +102,7 @@ public class TagApiLogicService extends CrudService<TagApiRequest, TagApiRespons
 
                 if(FormatCheck.tagName(body.getName())) return Header.ERROR(transactionType,"INVALID NAME",SessionApi.updateSession(request.getSession()));
 
-                if(tagRepository.findByName(body.getName()).isPresent()) return Header.ERROR(transactionType,"DUPLICATE NAME",SessionApi.updateSession(request.getSession()));
+                if(tagRepository.findFirstByName(body.getName()).isPresent()) return Header.ERROR(transactionType,"DUPLICATE NAME",SessionApi.updateSession(request.getSession()));
 
                 return Header.OK(
                         transactionType,

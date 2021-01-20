@@ -12,7 +12,10 @@ public enum OrderByType {
     ORDER_BY_COST_ASC(2),
     ORDER_BY_COST_DESC(3),
     ORDER_BY_REVIEW_ASC(4),
-    ORDER_BY_REVIEW_DESC(5);
+    ORDER_BY_REVIEW_DESC(5),
+    ORDER_BY_REGISTER_DATE_ASC(6),
+    ORDER_BY_REGISTER_DATER_DESC(7),
+    DO_NOT_ORDER(8);
 
     private final Integer id;
 

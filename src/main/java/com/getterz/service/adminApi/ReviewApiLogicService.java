@@ -1,12 +1,15 @@
 package com.getterz.service.adminApi;
 
+import com.getterz.crypt.Cryptor;
 import com.getterz.domain.model.Buyer;
 import com.getterz.domain.model.Product;
 import com.getterz.domain.model.Review;
+import com.getterz.domain.model.Tag;
 import com.getterz.domain.repository.BuyerRepository;
 import com.getterz.domain.repository.ProductRepository;
 import com.getterz.network.Header;
 import com.getterz.network.request.ReviewApiRequest;
+import com.getterz.network.response.ProductApiResponse;
 import com.getterz.network.response.ReviewApiResponse;
 import com.getterz.network.session.SessionApi;
 import com.getterz.service.CrudService;
@@ -14,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 @Service
@@ -187,7 +191,7 @@ public class ReviewApiLogicService extends CrudService<ReviewApiRequest, ReviewA
                 .purchaseReason(review.getPurchaseReason())
                 .build();
         if(review.getBuyer()!=null) body.setBuyer(BuyerApiLogicService.Body(review.getBuyer()));
-        if(review.getProduct()!=null) body.setProduct(ProductApiLogicService.Body(review.getProduct()));
+        if(review.getProduct()!=null) body.setProduct(Body(review.getProduct()));
         return body;
     }
 
@@ -198,6 +202,22 @@ public class ReviewApiLogicService extends CrudService<ReviewApiRequest, ReviewA
                 .purchaseResult(review.getPurchaseResult())
                 .purchaseReason(review.getPurchaseReason())
                 .build();
+    }
+
+    private ProductApiResponse Body(Product product){
+        ProductApiResponse body = ProductApiResponse.builder()
+                .id(product.getId())
+                .name(Cryptor.DECRYPT(product.getName()))
+                .cost(product.getCost())
+                .quantity(product.getQuantity())
+                .profileImageName(Cryptor.DECRYPT(product.getProfileImageName()))
+                .build();
+        if(product.getTags()!=null){
+            body.setTags(new ArrayList<>());
+            for(Tag tag : product.getTags())
+                body.getTags().add(TagApiLogicService.Body(tag));
+        }
+        return body;
     }
 
 }

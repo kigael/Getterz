@@ -79,19 +79,19 @@ export default function SellerFootBar() {
         <BottomNavigationAction
           component={Link}
           to="/seller/product"
-          label="Search"
+          label="Product"
           icon={<RedeemIcon />}
         />
         <BottomNavigationAction
           component={Link}
           to="/seller/order"
-          label="Purchase"
+          label="Order"
           icon={<ArrowForwardIcon />}
         />
         <BottomNavigationAction
           component={Link}
           to="/seller/withdraw"
-          label="Review"
+          label="Withdraw"
           icon={<LocalAtmIcon />}
         />
         <BottomNavigationAction
@@ -124,14 +124,12 @@ export default function SellerFootBar() {
             className={classes.logoutButton}
             autoFocus
             onClick={() => sellerAPILogout(header)}
-            color="primary"
           >
             {"YES"}
           </Button>
           <Button
             className={classes.logoutButton}
             onClick={handleCloseSellerLogout}
-            color="primary"
             autoFocus
           >
             {"NO"}

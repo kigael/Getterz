@@ -6,6 +6,7 @@ import * as B from "./Buyer";
 import * as S from "./Seller";
 import * as A from "./Admin";
 import { ThemeProvider, createMuiTheme } from "@material-ui/core/styles";
+
 const theme = createMuiTheme({
   typography: {
     fontFamily: ["Anton", "sans-serif"].join(","),
@@ -44,6 +45,11 @@ function Routing() {
         <Route path="/seller/verify_email" component={S.VerifyEmail} exact />
         <Route path="/seller/login" component={S.Login} exact />
         <Route path="/seller/product" component={S.Product} exact />
+        <Route
+          path="/seller/product/register"
+          component={S.ProductRegister}
+          exact
+        />
         <Route path="/seller/order" component={S.Order} exact />
         <Route path="/seller/withdraw" component={S.Withdraw} exact />
         <Route path="/seller/manage" component={S.Manage} exact />

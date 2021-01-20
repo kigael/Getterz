@@ -1,6 +1,7 @@
 package com.getterz.domain.repository;
 
 import com.getterz.domain.model.Product;
+import com.getterz.domain.model.Seller;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -1283,6 +1284,42 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("maximumCost")BigDecimal maximumCost,
             @Param("tags")Set<String> tags,
             @Param("numberOfTags")Integer numberOfTags,
+            Pageable pageable);
+
+    Page<Product> findBySellerAndNameContainingIgnoreCase(Seller seller, String name, Pageable pageable);
+
+    Page<Product> findBySellerAndNameContainingIgnoreCaseOrderByCostAsc(Seller seller, String name, Pageable pageable);
+
+    Page<Product> findBySellerAndNameContainingIgnoreCaseOrderByCostDesc(Seller seller, String name, Pageable pageable);
+
+    Page<Product> findBySellerAndNameContainingIgnoreCaseOrderByRegisteredDateAsc(Seller seller, String name, Pageable pageable);
+
+    Page<Product> findBySellerAndNameContainingIgnoreCaseOrderByRegisteredDateDesc(Seller seller, String name, Pageable pageable);
+
+    @Query(
+            value =
+                    "SELECT * " +
+                    "FROM PRODUCT " +
+                    "WHERE seller_id = :sellerId AND " +
+                    "LOWER(name) LIKE %:productName% " +
+                    "ORDER BY (SELECT COUNT(*) FROM review WHERE product_id = id) ASC;"
+            , nativeQuery = true)
+    Page<Product> findBySellerAndNameContainingIgnoreCaseOrderByReviewAsc(
+            @Param("sellerId") Long sellerId,
+            @Param("productName") String productName,
+            Pageable pageable);
+
+    @Query(
+            value =
+                    "SELECT * " +
+                    "FROM PRODUCT " +
+                    "WHERE seller_id = :sellerId AND " +
+                    "LOWER(name) LIKE %:productName% " +
+                    "ORDER BY (SELECT COUNT(*) FROM review WHERE product_id = id) ASC;"
+            , nativeQuery = true)
+    Page<Product> findBySellerAndNameContainingIgnoreCaseOrderByReviewDesc(
+            @Param("sellerId") Long sellerId,
+            @Param("productName") String productName,
             Pageable pageable);
 
 }

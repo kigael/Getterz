@@ -61,8 +61,8 @@ public class Product {
 
     private Boolean exposeToNoQualify;
 
-    private String description;
-
     private String profileImageName;
+
+    private String descriptionLink;
 
 }

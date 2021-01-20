@@ -4,10 +4,7 @@ import com.getterz.crypt.Cryptor;
 import com.getterz.domain.enumclass.OrderByType;
 import com.getterz.domain.enumclass.PurchaseState;
 import com.getterz.domain.enumclass.UserType;
-import com.getterz.domain.model.Buyer;
-import com.getterz.domain.model.Product;
-import com.getterz.domain.model.Purchase;
-import com.getterz.domain.model.Seller;
+import com.getterz.domain.model.*;
 import com.getterz.domain.repository.BuyerRepository;
 import com.getterz.domain.repository.ProductRepository;
 import com.getterz.domain.repository.PurchaseRepository;
@@ -15,14 +12,15 @@ import com.getterz.domain.repository.SellerRepository;
 import com.getterz.network.Header;
 import com.getterz.network.request.PurchaseApiRequest;
 import com.getterz.network.request.PurchaseHistoryApiRequest;
+import com.getterz.network.response.ProductApiResponse;
 import com.getterz.network.response.PurchaseApiResponse;
 import com.getterz.network.response.PurchaseHistoryApiResponse;
 import com.getterz.network.session.Session;
 import com.getterz.network.session.SessionApi;
 import com.getterz.service.adminApi.BuyerApiLogicService;
-import com.getterz.service.adminApi.ProductApiLogicService;
 import com.getterz.service.adminApi.PurchaseApiLogicService;
 import com.getterz.service.adminApi.SellerApiLogicService;
+import com.getterz.service.adminApi.TagApiLogicService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -31,10 +29,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -412,7 +407,23 @@ public class BuyerPurchaseApiLogicService {
                 .build();
         if(purchase.getSeller()!=null) body.setSeller(SellerApiLogicService.Body(purchase.getSeller()));
         if(purchase.getBuyer()!=null) body.setBuyer(BuyerApiLogicService.Body(purchase.getBuyer()));
-        if(purchase.getProduct()!=null) body.setProduct(ProductApiLogicService.Body(purchase.getProduct()));
+        if(purchase.getProduct()!=null) body.setProduct(Body(purchase.getProduct()));
+        return body;
+    }
+
+    private ProductApiResponse Body(Product product){
+        ProductApiResponse body = ProductApiResponse.builder()
+                .id(product.getId())
+                .name(Cryptor.DECRYPT(product.getName()))
+                .cost(product.getCost())
+                .quantity(product.getQuantity())
+                .profileImageName(Cryptor.DECRYPT(product.getProfileImageName()))
+                .build();
+        if(product.getTags()!=null){
+            body.setTags(new ArrayList<>());
+            for(Tag tag : product.getTags())
+                body.getTags().add(TagApiLogicService.Body(tag));
+        }
         return body;
     }
 

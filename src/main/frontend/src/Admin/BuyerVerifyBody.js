@@ -61,7 +61,6 @@ export default function BuyerVerifyBody(props) {
         },
       })
       .then(function (response) {
-        console.log(response);
         if (response.data.resultCode === "OK") {
           setBuyers(response.data.data.buyers);
           setPagenate({

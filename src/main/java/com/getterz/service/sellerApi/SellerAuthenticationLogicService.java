@@ -242,20 +242,16 @@ public class SellerAuthenticationLogicService extends AuthenticationService<Sell
 
     private SellerApiResponse response(Seller seller){
         return SellerApiResponse.builder()
-                .id(seller.getId())
-                .name(seller.getName())
-                .password(seller.getPassword())
-                .emergencyPassword(seller.getEmergencyPassword())
+                .name(Cryptor.DECRYPT(seller.getName()))
                 .gender(seller.getGender())
                 .dateOfBirth(seller.getDateOfBirth())
-                .dateOfJoin(seller.getDateOfJoin())
-                .dateOfModify(seller.getDateOfModify())
-                .emailAddress(seller.getEmailAddress())
-                .cellNumber(seller.getCellNumber())
+                .emailAddress(Cryptor.DECRYPT(seller.getEmailAddress()))
+                .cellNumber(Cryptor.DECRYPT(seller.getCellNumber()))
                 .latitude(seller.getLatitude())
                 .longitude(seller.getLongitude())
-                .address(seller.getAddress())
+                .address(Cryptor.DECRYPT(seller.getAddress()))
                 .soldAmount(seller.getSoldAmount())
+                .profileImageName(Cryptor.DECRYPT(seller.getProfileImageName()))
                 .build();
     }
 

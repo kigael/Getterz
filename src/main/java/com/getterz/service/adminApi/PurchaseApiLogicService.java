@@ -1,16 +1,15 @@
 package com.getterz.service.adminApi;
 
+import com.getterz.crypt.Cryptor;
 import com.getterz.domain.enumclass.PurchaseState;
-import com.getterz.domain.model.Buyer;
-import com.getterz.domain.model.Product;
-import com.getterz.domain.model.Purchase;
-import com.getterz.domain.model.Seller;
+import com.getterz.domain.model.*;
 import com.getterz.domain.repository.BuyerRepository;
 import com.getterz.domain.repository.ProductRepository;
 import com.getterz.domain.repository.PurchaseRepository;
 import com.getterz.domain.repository.SellerRepository;
 import com.getterz.network.Header;
 import com.getterz.network.request.PurchaseApiRequest;
+import com.getterz.network.response.ProductApiResponse;
 import com.getterz.network.response.PurchaseApiResponse;
 import com.getterz.network.session.SessionApi;
 import com.getterz.service.CrudService;
@@ -19,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Optional;
 
 @Service
@@ -264,7 +264,7 @@ public class PurchaseApiLogicService extends CrudService<PurchaseApiRequest, Pur
                 .build();
         if(purchase.getSeller()!=null) body.setSeller(SellerApiLogicService.Body(purchase.getSeller()));
         if(purchase.getBuyer()!=null) body.setBuyer(BuyerApiLogicService.Body(purchase.getBuyer()));
-        if(purchase.getProduct()!=null) body.setProduct(ProductApiLogicService.Body(purchase.getProduct()));
+        if(purchase.getProduct()!=null) body.setProduct(Body(purchase.getProduct()));
         return body;
     }
 
@@ -281,6 +281,22 @@ public class PurchaseApiLogicService extends CrudService<PurchaseApiRequest, Pur
                 .sellerDelete(purchase.getSellerDelete())
                 .buyerDelete(purchase.getBuyerDelete())
                 .build();
+    }
+
+    private ProductApiResponse Body(Product product){
+        ProductApiResponse body = ProductApiResponse.builder()
+                .id(product.getId())
+                .name(Cryptor.DECRYPT(product.getName()))
+                .cost(product.getCost())
+                .quantity(product.getQuantity())
+                .profileImageName(Cryptor.DECRYPT(product.getProfileImageName()))
+                .build();
+        if(product.getTags()!=null){
+            body.setTags(new ArrayList<>());
+            for(Tag tag : product.getTags())
+                body.getTags().add(TagApiLogicService.Body(tag));
+        }
+        return body;
     }
 
 }

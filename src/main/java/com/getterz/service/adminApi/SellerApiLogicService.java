@@ -4,10 +4,12 @@ import com.getterz.crypt.Cryptor;
 import com.getterz.domain.model.Product;
 import com.getterz.domain.model.Purchase;
 import com.getterz.domain.model.Seller;
+import com.getterz.domain.model.Tag;
 import com.getterz.domain.repository.SellerRepository;
 import com.getterz.format.check.FormatCheck;
 import com.getterz.network.Header;
 import com.getterz.network.request.SellerApiRequest;
+import com.getterz.network.response.ProductApiResponse;
 import com.getterz.network.response.SellerApiResponse;
 import com.getterz.network.session.SessionApi;
 import com.getterz.service.CrudService;
@@ -276,7 +278,7 @@ public class SellerApiLogicService extends CrudService<SellerApiRequest, SellerA
         if(seller.getProducts()!=null){
             body.setProducts(new ArrayList<>());
             for(Product product : seller.getProducts())
-                body.getProducts().add(ProductApiLogicService.Body(product));
+                body.getProducts().add(Body(product));
         }
         if(seller.getPurchases()!=null){
             body.setOrders(new ArrayList<>());
@@ -303,6 +305,22 @@ public class SellerApiLogicService extends CrudService<SellerApiRequest, SellerA
                 .address(seller.getAddress())
                 .soldAmount(seller.getSoldAmount())
                 .build();
+    }
+
+    private ProductApiResponse Body(Product product){
+        ProductApiResponse body = ProductApiResponse.builder()
+                .id(product.getId())
+                .name(Cryptor.DECRYPT(product.getName()))
+                .cost(product.getCost())
+                .quantity(product.getQuantity())
+                .profileImageName(Cryptor.DECRYPT(product.getProfileImageName()))
+                .build();
+        if(product.getTags()!=null){
+            body.setTags(new ArrayList<>());
+            for(Tag tag : product.getTags())
+                body.getTags().add(TagApiLogicService.Body(tag));
+        }
+        return body;
     }
 
 }

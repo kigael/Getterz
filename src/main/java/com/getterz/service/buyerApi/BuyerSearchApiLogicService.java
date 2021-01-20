@@ -247,7 +247,7 @@ public class BuyerSearchApiLogicService {
                 }
                 SearchApiResponse searchApiResponse = new SearchApiResponse();
                 List<ProductApiResponse> productApiResponseList = products.stream()
-                        .map(ProductApiLogicService::Body)
+                        .map(this::Body)
                         .collect(Collectors.toList());
                 searchApiResponse.setProducts(productApiResponseList);
                 searchApiResponse
@@ -345,6 +345,22 @@ public class BuyerSearchApiLogicService {
             body.setBannedJobs(new ArrayList<>());
             for(Job job : product.getBannedJobs())
                 body.getBannedJobs().add(JobApiLogicService.Body(job));
+        }
+        return body;
+    }
+
+    private ProductApiResponse Body(Product product){
+        ProductApiResponse body = ProductApiResponse.builder()
+                .id(product.getId())
+                .name(Cryptor.DECRYPT(product.getName()))
+                .cost(product.getCost())
+                .quantity(product.getQuantity())
+                .profileImageName(Cryptor.DECRYPT(product.getProfileImageName()))
+                .build();
+        if(product.getTags()!=null){
+            body.setTags(new ArrayList<>());
+            for(Tag tag : product.getTags())
+                body.getTags().add(TagApiLogicService.Body(tag));
         }
         return body;
     }

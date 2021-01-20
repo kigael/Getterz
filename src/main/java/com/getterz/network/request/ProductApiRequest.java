@@ -19,8 +19,6 @@ public class ProductApiRequest {
 
     private String name;
 
-    private Long sellerId;
-
     private BigDecimal cost;
 
     private Set<String> tags;
@@ -39,6 +37,6 @@ public class ProductApiRequest {
 
     private Boolean exposeToNoQualify;
 
-    private String description;
+    private String descriptionLink;
 
 }
