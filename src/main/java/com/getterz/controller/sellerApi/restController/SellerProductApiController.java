@@ -31,6 +31,25 @@ public class SellerProductApiController {
         return sellerProductLogicService.searchProduct(productName,orderByType,session,pageable);
     }
 
+    @GetMapping("{id}")
+    public Header<ProductApiResponse> getProduct(
+            @RequestParam(value="getterz_session") String session,
+            @PathVariable("id") Long id){
+        return sellerProductLogicService.getProduct(session,id);
+    }
+
+    @PutMapping("{id}")
+    public Header<ProductApiResponse> editProduct(@RequestBody Header<ProductApiRequest> request){
+        return sellerProductLogicService.editProduct(request);
+    }
+
+    @DeleteMapping("{id}")
+    public Header<ProductApiResponse> deleteProduct(
+            @RequestParam(value="getterz_session") String session,
+            @PathVariable("id") Long id){
+        return sellerProductLogicService.deleteProduct(session,id);
+    }
+
     @PostMapping("")
     public Header<ProductApiResponse> registerProduct(@RequestBody Header<ProductApiRequest> request){
         return sellerProductLogicService.registerProduct(request);

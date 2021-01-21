@@ -5,19 +5,16 @@ import { sellerLoading, sellerDone } from "../info/SellerInfo";
 import {
   Grid,
   TextField,
-  Typography,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
-  Card,
-  CardMedia,
-  CardContent,
-  CardActions,
   Button,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import Pagination from "@material-ui/lab/Pagination";
+import EmptyCard from "./EmptyCard";
+import ProductCard from "./ProductCard";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -46,17 +43,6 @@ const useStyles = makeStyles((theme) => ({
     "&:hover": {
       backgroundColor: theme.palette.success.light,
     },
-  },
-  tagBox: {
-    display: "flex",
-    justifyContent: "center",
-    flexWrap: "wrap",
-    listStyle: "none",
-    padding: theme.spacing(0.5),
-    margin: 0,
-  },
-  chip: {
-    margin: theme.spacing(0.5),
   },
   formControl: {
     margin: theme.spacing(1),
@@ -113,7 +99,6 @@ const useStyles = makeStyles((theme) => ({
 
 export default function ProductBody(props) {
   const classes = useStyles();
-  const baseDir = "/upload/product/profile_image/";
   const [called, setCalled] = useState(false);
   const [pagenate, setPagenate] = useState({
     page: 1,
@@ -264,65 +249,15 @@ export default function ProductBody(props) {
         {products.map((product) => {
           if (product) {
             return (
-              <Grid item key={product} xs={3}>
-                <Card className={classes.card}>
-                  <CardMedia
-                    className={classes.cardMedia}
-                    image={baseDir + product.profileImageName}
-                    title={product.name}
-                  />
-                  <CardContent className={classes.cardContent}>
-                    <Typography gutterBottom variant="h5" component="h2">
-                      {product.name}
-                    </Typography>
-                    <Typography>${product.cost}</Typography>
-                  </CardContent>
-                  <CardActions>
-                    <Button size="small">Edit</Button>
-                    <Button size="small">Delete</Button>
-                  </CardActions>
-                </Card>
-              </Grid>
+              <ProductCard
+                classes={classes}
+                product={product}
+                session={props.session}
+                refresh={SearchProducts}
+              />
             );
           } else {
-            return (
-              <Grid item xs={3}>
-                <Card className={classes.card}>
-                  <CardMedia className={classes.cardMedia} />
-                  <CardContent className={classes.cardContent}>
-                    <Typography
-                      gutterBottom
-                      variant="h5"
-                      component="h2"
-                      style={{ color: "white", backgroundColor: "white" }}
-                    >
-                      EMPTY
-                    </Typography>
-                    <Typography
-                      style={{ color: "white", backgroundColor: "white" }}
-                    >
-                      EMPTY
-                    </Typography>
-                  </CardContent>
-                  <CardActions>
-                    <Button
-                      style={{ color: "white", backgroundColor: "white" }}
-                      size="small"
-                      disabled
-                    >
-                      EMPTY
-                    </Button>
-                    <Button
-                      style={{ color: "white", backgroundColor: "white" }}
-                      size="small"
-                      disabled
-                    >
-                      EMPTY
-                    </Button>
-                  </CardActions>
-                </Card>
-              </Grid>
-            );
+            return <EmptyCard classes={classes} />;
           }
         })}
       </Grid>

@@ -47,8 +47,8 @@ public class ProductApiResponse {
 
     private Boolean exposeToNoQualify;
 
-    private String description;
-
     private String profileImageName;
+
+    private String descriptionLink;
 
 }

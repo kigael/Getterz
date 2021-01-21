@@ -1286,23 +1286,77 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             @Param("numberOfTags")Integer numberOfTags,
             Pageable pageable);
 
-    Page<Product> findBySellerAndNameContainingIgnoreCase(Seller seller, String name, Pageable pageable);
-
-    Page<Product> findBySellerAndNameContainingIgnoreCaseOrderByCostAsc(Seller seller, String name, Pageable pageable);
-
-    Page<Product> findBySellerAndNameContainingIgnoreCaseOrderByCostDesc(Seller seller, String name, Pageable pageable);
-
-    Page<Product> findBySellerAndNameContainingIgnoreCaseOrderByRegisteredDateAsc(Seller seller, String name, Pageable pageable);
-
-    Page<Product> findBySellerAndNameContainingIgnoreCaseOrderByRegisteredDateDesc(Seller seller, String name, Pageable pageable);
+    @Query(
+            value =
+                    "SELECT * " +
+                    "FROM PRODUCT " +
+                    "WHERE seller_id = :sellerId AND " +
+                    "LOWER(name) LIKE LOWER(CONCAT('%',:productName,'%')) "
+            , nativeQuery = true)
+    Page<Product> findBySellerAndNameContainingIgnoreCase(
+            @Param("sellerId") Long sellerId,
+            @Param("productName") String productName,
+            Pageable pageable);
 
     @Query(
             value =
                     "SELECT * " +
                     "FROM PRODUCT " +
                     "WHERE seller_id = :sellerId AND " +
-                    "LOWER(name) LIKE %:productName% " +
-                    "ORDER BY (SELECT COUNT(*) FROM review WHERE product_id = id) ASC;"
+                    "LOWER(name) LIKE LOWER(CONCAT('%',:productName,'%')) " +
+                    "ORDER BY cost ASC "
+            , nativeQuery = true)
+    Page<Product> findBySellerAndNameContainingIgnoreCaseOrderByCostAsc(
+            @Param("sellerId") Long sellerId,
+            @Param("productName") String productName,
+            Pageable pageable);
+
+    @Query(
+            value =
+                    "SELECT * " +
+                    "FROM PRODUCT " +
+                    "WHERE seller_id = :sellerId AND " +
+                    "LOWER(name) LIKE LOWER(CONCAT('%',:productName,'%')) " +
+                    "ORDER BY cost DESC "
+            , nativeQuery = true)
+    Page<Product> findBySellerAndNameContainingIgnoreCaseOrderByCostDesc(
+            @Param("sellerId") Long sellerId,
+            @Param("productName") String productName,
+            Pageable pageable);
+
+    @Query(
+            value =
+                    "SELECT * " +
+                    "FROM PRODUCT " +
+                    "WHERE seller_id = :sellerId AND " +
+                    "LOWER(name) LIKE LOWER(CONCAT('%',:productName,'%')) " +
+                    "ORDER BY registered_date ASC "
+            , nativeQuery = true)
+    Page<Product> findBySellerAndNameContainingIgnoreCaseOrderByRegisteredDateAsc(
+            @Param("sellerId") Long sellerId,
+            @Param("productName") String productName,
+            Pageable pageable);
+
+    @Query(
+            value =
+                    "SELECT * " +
+                    "FROM PRODUCT " +
+                    "WHERE seller_id = :sellerId AND " +
+                    "LOWER(name) LIKE LOWER(CONCAT('%',:productName,'%')) " +
+                    "ORDER BY registered_date DESC "
+            , nativeQuery = true)
+    Page<Product> findBySellerAndNameContainingIgnoreCaseOrderByRegisteredDateDesc(
+            @Param("sellerId") Long sellerId,
+            @Param("productName") String productName,
+            Pageable pageable);
+
+    @Query(
+            value =
+                    "SELECT * " +
+                    "FROM PRODUCT " +
+                    "WHERE seller_id = :sellerId AND " +
+                    "LOWER(name) LIKE LOWER(CONCAT('%',:productName,'%')) " +
+                    "ORDER BY (SELECT COUNT(*) FROM review WHERE product_id = id) ASC "
             , nativeQuery = true)
     Page<Product> findBySellerAndNameContainingIgnoreCaseOrderByReviewAsc(
             @Param("sellerId") Long sellerId,
@@ -1314,8 +1368,8 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
                     "SELECT * " +
                     "FROM PRODUCT " +
                     "WHERE seller_id = :sellerId AND " +
-                    "LOWER(name) LIKE %:productName% " +
-                    "ORDER BY (SELECT COUNT(*) FROM review WHERE product_id = id) ASC;"
+                    "LOWER(name) LIKE LOWER(CONCAT('%',:productName,'%')) " +
+                    "ORDER BY (SELECT COUNT(*) FROM review WHERE product_id = id) ASC "
             , nativeQuery = true)
     Page<Product> findBySellerAndNameContainingIgnoreCaseOrderByReviewDesc(
             @Param("sellerId") Long sellerId,

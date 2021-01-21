@@ -3,10 +3,7 @@ package com.getterz.service.sellerApi;
 import com.getterz.crypt.Cryptor;
 import com.getterz.domain.enumclass.OrderByType;
 import com.getterz.domain.enumclass.UserType;
-import com.getterz.domain.model.Job;
-import com.getterz.domain.model.Product;
-import com.getterz.domain.model.Seller;
-import com.getterz.domain.model.Tag;
+import com.getterz.domain.model.*;
 import com.getterz.domain.repository.JobRepository;
 import com.getterz.domain.repository.ProductRepository;
 import com.getterz.domain.repository.SellerRepository;
@@ -19,6 +16,9 @@ import com.getterz.network.response.ProductApiResponse;
 import com.getterz.network.response.SearchApiResponse;
 import com.getterz.network.session.Session;
 import com.getterz.network.session.SessionApi;
+import com.getterz.service.adminApi.JobApiLogicService;
+import com.getterz.service.adminApi.ReviewApiLogicService;
+import com.getterz.service.adminApi.SellerApiLogicService;
 import com.getterz.service.adminApi.TagApiLogicService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
@@ -62,16 +62,16 @@ public class SellerProductLogicService {
             Page<Product> products;
 
             if(orderByType==OrderByType.ORDER_BY_COST_ASC){
-                products = productRepository.findBySellerAndNameContainingIgnoreCaseOrderByCostAsc(seller.get(),productName,pageable);
+                products = productRepository.findBySellerAndNameContainingIgnoreCaseOrderByCostAsc(seller.get().getId(),productName,pageable);
             }
             else if(orderByType==OrderByType.ORDER_BY_COST_DESC){
-                products = productRepository.findBySellerAndNameContainingIgnoreCaseOrderByCostDesc(seller.get(),productName,pageable);
+                products = productRepository.findBySellerAndNameContainingIgnoreCaseOrderByCostDesc(seller.get().getId(),productName,pageable);
             }
             else if(orderByType==OrderByType.ORDER_BY_REGISTER_DATE_ASC){
-                products = productRepository.findBySellerAndNameContainingIgnoreCaseOrderByRegisteredDateAsc(seller.get(),productName,pageable);
+                products = productRepository.findBySellerAndNameContainingIgnoreCaseOrderByRegisteredDateAsc(seller.get().getId(),productName,pageable);
             }
             else if(orderByType==OrderByType.ORDER_BY_REGISTER_DATER_DESC){
-                products = productRepository.findBySellerAndNameContainingIgnoreCaseOrderByRegisteredDateDesc(seller.get(),productName,pageable);
+                products = productRepository.findBySellerAndNameContainingIgnoreCaseOrderByRegisteredDateDesc(seller.get().getId(),productName,pageable);
             }
             else if(orderByType==OrderByType.ORDER_BY_REVIEW_ASC){
                 products = productRepository.findBySellerAndNameContainingIgnoreCaseOrderByReviewAsc(seller.get().getId(),productName,pageable);
@@ -80,7 +80,7 @@ public class SellerProductLogicService {
                 products = productRepository.findBySellerAndNameContainingIgnoreCaseOrderByReviewDesc(seller.get().getId(),productName,pageable);
             }
             else{
-                products = productRepository.findBySellerAndNameContainingIgnoreCase(seller.get(),productName,pageable);
+                products = productRepository.findBySellerAndNameContainingIgnoreCase(seller.get().getId(),productName,pageable);
             }
 
             SearchApiResponse responseData = new SearchApiResponse();
@@ -98,10 +98,77 @@ public class SellerProductLogicService {
         }
     }
 
+    public Header<ProductApiResponse> getProduct(String session, Long id) {
+        String transactionType="SELLER VIEW PRODUCT";
+        if(session==null) return Header.ERROR(transactionType,"NO SESSION",null);
+        else if(!SessionApi.checkSession(session)) return Header.ERROR(transactionType,"INVALID SESSION",null);
+        else{
+            Session s = Session.toSession(Cryptor.DECRYPT(session));
+            if(s==null||s.getUserType()==null||s.getUserType()!= UserType.SELLER) return Header.ERROR(transactionType,"INVALID SESSION",null);
+
+            Optional<Seller> seller = sellerRepository.findById(s.getId());
+            if(seller.isEmpty()) return Header.ERROR(transactionType,"INVALID SESSION",null);
+
+            Optional<Product> product = productRepository.findById(id);
+            if(product.isEmpty()) return Header.ERROR(transactionType,"PRODUCT NOT FOUND",SessionApi.updateSession(session));
+
+            if(!product.get().getSeller().getId().equals(seller.get().getId())) return Header.ERROR(transactionType,"INVALID SESSION",null);
+
+            return Header.OK(transactionType,response(product.get()),SessionApi.updateSession(session));
+        }
+    }
+
+    public Header<ProductApiResponse> editProduct(Header<ProductApiRequest> request) {
+        return null;
+    }
+
+    public Header<ProductApiResponse> deleteProduct(String session, Long id) {
+        String transactionType="SELLER DELETE PRODUCT";
+        if(session==null) return Header.ERROR(transactionType,"NO SESSION",null);
+        else if(!SessionApi.checkSession(session)) return Header.ERROR(transactionType,"INVALID SESSION",null);
+        else{
+            Session s = Session.toSession(Cryptor.DECRYPT(session));
+            if(s==null||s.getUserType()==null||s.getUserType()!= UserType.SELLER) return Header.ERROR(transactionType,"INVALID SESSION",null);
+
+            Optional<Seller> seller = sellerRepository.findById(s.getId());
+            if(seller.isEmpty()) return Header.ERROR(transactionType,"INVALID SESSION",null);
+
+            Optional<Product> product = productRepository.findById(id);
+            if(product.isEmpty()) return Header.ERROR(transactionType,"PRODUCT NOT FOUND",SessionApi.updateSession(session));
+
+            if(!product.get().getSeller().getId().equals(seller.get().getId())) return Header.ERROR(transactionType,"INVALID SESSION",null);
+
+            productRepository.delete(product.get());
+            return Header.OK(transactionType,SessionApi.updateSession(session));
+        }
+    }
+
+    private ProductApiResponse response(Product product){
+        ProductApiResponse body = ProductApiResponse.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .cost(product.getCost())
+                .quantity(product.getQuantity())
+                .profileImageName(Cryptor.DECRYPT(product.getProfileImageName()))
+                .descriptionLink(Cryptor.DECRYPT(product.getDescriptionLink()))
+                .build();
+        if(product.getTags()!=null){
+            body.setTags(new ArrayList<>());
+            for(Tag tag : product.getTags())
+                body.getTags().add(TagApiLogicService.Body(tag));
+        }
+        if(product.getReviews()!=null){
+            body.setReviews(new ArrayList<>());
+            for(Review review : product.getReviews())
+                body.getReviews().add(ReviewApiLogicService.Body(review));
+        }
+        return body;
+    }
+
     private ProductApiResponse Body(Product product){
         ProductApiResponse body = ProductApiResponse.builder()
                 .id(product.getId())
-                .name(Cryptor.DECRYPT(product.getName()))
+                .name(product.getName())
                 .cost(product.getCost())
                 .quantity(product.getQuantity())
                 .profileImageName(Cryptor.DECRYPT(product.getProfileImageName()))
@@ -234,7 +301,7 @@ public class SellerProductLogicService {
                 }
 
                 Product product = productRepository.save(Product.builder()
-                        .name(Cryptor.ENCRYPT(body.getName()))
+                        .name(body.getName())
                         .seller(seller.get())
                         .cost(body.getCost())
                         .tags(tags)

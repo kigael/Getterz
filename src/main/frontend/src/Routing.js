@@ -50,6 +50,11 @@ function Routing() {
           component={S.ProductRegister}
           exact
         />
+        <Route
+          path="/seller/product/:productId"
+          component={S.ProductView}
+          exact
+        />
         <Route path="/seller/order" component={S.Order} exact />
         <Route path="/seller/withdraw" component={S.Withdraw} exact />
         <Route path="/seller/manage" component={S.Manage} exact />
