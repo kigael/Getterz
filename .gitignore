@@ -5,6 +5,10 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+### Sensitive Data ###
+src/main/resources/application.yml
+upload/
+
 ### STS ###
 .apt_generated
 .classpath

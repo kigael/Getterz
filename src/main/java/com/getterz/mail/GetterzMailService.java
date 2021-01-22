@@ -1,7 +1,10 @@
 package com.getterz.mail;
 
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
@@ -13,20 +16,30 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
-@Service
+@Component
 public class GetterzMailService {
 
-    static final String FROM = "kigael16@naver.com";
-    static final String FROMNAME = "Getterz Verification";
-    static final String SMTP_USERNAME = "kigael16@naver.com";
-    static final String SMTP_PASSWORD = "kenem-1257-";
-    static final String HOST = "smtp.naver.com";
-    static final int PORT = 465;
-    private final Properties props;
-    private final Session session;
+    @Autowired
+    private Environment env;
+
+    private static String FROM;
+    private static String FROMNAME;
+    private static String SMTP_USERNAME;
+    private static String SMTP_PASSWORD;
+    private static String HOST;
+    private static int PORT;
+    private Properties props;
+    private Session session;
     private MimeMessage msg;
 
-    GetterzMailService(){
+    @PostConstruct
+    private void init(){
+        FROM = env.getProperty("e-mail.from");
+        FROMNAME = env.getProperty("e-mail.from-name");
+        SMTP_USERNAME = env.getProperty("e-mai.smtp-username");
+        SMTP_PASSWORD = env.getProperty("e-mail.smtp-password");
+        HOST = env.getProperty("e-mail.host");
+        PORT = Integer.parseInt(env.getProperty("e-mail.port"));
         this.props = System.getProperties();
         this.props.put("mail.smtp.host", HOST);
         this.props.put("mail.smtp.port", PORT);

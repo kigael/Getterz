@@ -1,7 +1,6 @@
 import React from "react";
 import { Route, Switch } from "react-router-dom";
-import AboutGetterz from "./AboutGetterz";
-import Gate from "./Gate";
+import { Gate, AboutGetterz } from "./GetterzHome";
 import * as B from "./Buyer";
 import * as S from "./Seller";
 import * as A from "./Admin";
@@ -48,6 +47,11 @@ function Routing() {
         <Route
           path="/seller/product/register"
           component={S.ProductRegister}
+          exact
+        />
+        <Route
+          path="/seller/product/edit/:productId"
+          component={S.ProductEdit}
           exact
         />
         <Route

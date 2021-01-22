@@ -1,12 +1,12 @@
-import Gate from "./Gate";
-import Login from "./Login";
-import Signup from "./Signup";
-import BuyerVerify from "./BuyerVerify";
-import BuyerVerifyCertify from "./BuyerVerifyCertify";
-import SellerVerify from "./SellerVerify";
-import SellerVerifyCertify from "./SellerVerifyCertify";
-import BuyerRefund from "./BuyerRefund";
-import SellerWithdraw from "./SellerWithdraw";
+import Gate from "./Gate/Gate";
+import Login from "./Login/Login";
+import Signup from "./Signup/Signup";
+import BuyerVerify from "./BuyerVerify/BuyerVerify";
+import BuyerVerifyCertify from "./BuyerVerifyCertify/BuyerVerifyCertify";
+import SellerVerify from "./SellerVerify/SellerVerify";
+import SellerVerifyCertify from "./SellerVerifyCertify/SellerVerifyCertify";
+import BuyerRefund from "./BuyerRefund/BuyerRefund";
+import SellerWithdraw from "./SellerWithdraw/SellerWithdraw";
 
 export {
   Gate,

@@ -38,7 +38,7 @@ public class SellerProductApiController {
         return sellerProductLogicService.getProduct(session,id);
     }
 
-    @PutMapping("{id}")
+    @PutMapping("")
     public Header<ProductApiResponse> editProduct(@RequestBody Header<ProductApiRequest> request){
         return sellerProductLogicService.editProduct(request);
     }

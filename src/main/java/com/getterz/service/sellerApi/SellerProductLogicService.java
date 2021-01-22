@@ -119,7 +119,153 @@ public class SellerProductLogicService {
     }
 
     public Header<ProductApiResponse> editProduct(Header<ProductApiRequest> request) {
-        return null;
+        String transactionType = "SELLER EDIT PRODUCT";
+        if(request==null) return Header.ERROR(transactionType,"NO HEADER",null);
+        else if(request.getData()==null) return Header.ERROR(transactionType,"NO DATA", SessionApi.updateSession(request.getSession()));
+        else if(request.getSession()==null) return Header.ERROR(transactionType,"NO SESSION",null);
+        else if(!SessionApi.checkSession(request.getSession())) return Header.ERROR(transactionType,"INVALID SESSION",null);
+        else{
+            ProductApiRequest body = request.getData();
+            StringBuilder description = new StringBuilder();
+            Boolean isGreen = Boolean.TRUE;
+            if(body.getId()==null){
+                description.append("NO ID\n");
+                isGreen=Boolean.FALSE;
+            }
+            if(body.getName()==null){
+                description.append("NO NAME\n");
+                isGreen=Boolean.FALSE;
+            }
+            if(body.getCost()==null){
+                description.append("NO COST\n");
+                isGreen=Boolean.FALSE;
+            }
+            if(body.getTags()==null){
+                description.append("NO TAGS\n");
+                isGreen=Boolean.FALSE;
+            }
+            if(body.getQuantity()==null){
+                description.append("NO QUANTITY\n");
+                isGreen=Boolean.FALSE;
+            }
+            if(body.getAllowedGender()==null){
+                description.append("NO ALLOWED GENDER\n");
+                isGreen=Boolean.FALSE;
+            }
+            if(body.getAllowedMinimumAge()==null||body.getAllowedMaximumAge()==null){
+                description.append("NO AGE REGULATION\n");
+                isGreen=Boolean.FALSE;
+            }
+            if(body.getAllowedJob()==null&&body.getBannedJob()==null){
+                description.append("NO JOB REGULATION\n");
+                isGreen=Boolean.FALSE;
+            }
+            if(body.getExposeToNoQualify()==null){
+                description.append("NO EXPOSE OPTION\n");
+                isGreen=Boolean.FALSE;
+            }
+            if(body.getDescriptionLink()==null){
+                description.append("NO DESCRIPTION LINK\n");
+                isGreen=Boolean.FALSE;
+            }
+            if(isGreen){
+                Session s = Session.toSession(Cryptor.DECRYPT(request.getSession()));
+                if(s==null||s.getUserType()==null||s.getUserType()!= UserType.SELLER) return Header.ERROR(transactionType,"INVALID SESSION",null);
+
+                Optional<Seller> seller = sellerRepository.findById(s.getId());
+                if(seller.isEmpty()) return Header.ERROR(transactionType,"INVALID SESSION",null);
+
+                Optional<Product> product = productRepository.findById(body.getId());
+                if(product.isEmpty()) return Header.ERROR(transactionType,"INVALID SESSION",null);
+
+                if(!product.get().getSeller().getId().equals(seller.get().getId())) return Header.ERROR(transactionType,"INVALID SESSION",null);
+
+                if(FormatCheck.productName(body.getName())) return Header.ERROR(transactionType,"INVALID PRODUCT NAME",SessionApi.updateSession(request.getSession()));
+
+                if(body.getCost().compareTo(BigDecimal.ZERO)<=0) return Header.ERROR(transactionType,"INVALID PRODUCT COST",SessionApi.updateSession(request.getSession()));
+
+                if(body.getTags()!=null){
+                    for(String t : body.getTags()){
+                        if(FormatCheck.tagName(t)) return Header.ERROR(transactionType,"INVALID TAG",SessionApi.updateSession(request.getSession()));
+                    }
+                }
+
+                if(body.getQuantity()<=0) return Header.ERROR(transactionType,"INVALID QUANTITY",SessionApi.updateSession(request.getSession()));
+
+                if(body.getAllowedMinimumAge()> body.getAllowedMaximumAge()) return Header.ERROR(transactionType,"INVALID AGE REGULATION",SessionApi.updateSession(request.getSession()));
+
+                if(body.getAllowedJob()!=null&&body.getBannedJob()!=null) return Header.ERROR(transactionType,"INVALID JOB REGULATION",SessionApi.updateSession(request.getSession()));
+
+                if(body.getAllowedJob()!=null){
+                    for(String j : body.getAllowedJob()){
+                        if(FormatCheck.jobName(j)) return Header.ERROR(transactionType,"INVALID JOB",SessionApi.updateSession(request.getSession()));
+                    }
+                }
+                else if(body.getBannedJob()!=null){
+                    for(String j : body.getBannedJob()){
+                        if(FormatCheck.jobName(j)) return Header.ERROR(transactionType,"INVALID JOB",SessionApi.updateSession(request.getSession()));
+                    }
+                }
+
+                if(!body.getDescriptionLink().startsWith("http://")&&!body.getDescriptionLink().startsWith("https://")) return Header.ERROR(transactionType,"INVALID DESCRIPTION LINK",SessionApi.updateSession(request.getSession()));
+
+                Set<Tag> tags = new HashSet<>();
+                for(String t : body.getTags()){
+                    Optional<Tag> tag = tagRepository.findFirstByName(t);
+                    if(tag.isEmpty()){
+                        tags.add(tagRepository.save(Tag.builder().name(t).build()));
+                    }
+                    else{
+                        tags.add(tag.get());
+                    }
+                }
+
+                Set<Job> allowedJobs = new HashSet<>();
+                if(body.getAllowedJob()!=null){
+                    for(String j : body.getAllowedJob()){
+                        Optional<Job> job = jobRepository.findFirstByName(j);
+                        if(job.isEmpty()){
+                            allowedJobs.add(jobRepository.save(Job.builder().name(j).build()));
+                        }
+                        else{
+                            allowedJobs.add(job.get());
+                        }
+                    }
+                }
+
+                Set<Job> bannedJobs = new HashSet<>();
+                if(body.getBannedJob()!=null){
+                    for(String j : body.getBannedJob()){
+                        Optional<Job> job = jobRepository.findFirstByName(j);
+                        if(job.isEmpty()){
+                            bannedJobs.add(jobRepository.save(Job.builder().name(j).build()));
+                        }
+                        else{
+                            bannedJobs.add(job.get());
+                        }
+                    }
+                }
+
+                Product productEdit = productRepository.save(product.get()
+                        .setName(body.getName())
+                        .setCost(body.getCost())
+                        .setTags(tags)
+                        .setQuantity(body.getQuantity())
+                        .setAllowedGender(DtoConverter.setOfGenderToString(body.getAllowedGender()))
+                        .setAllowedMinimumAge(body.getAllowedMinimumAge())
+                        .setAllowedMaximumAge(body.getAllowedMaximumAge())
+                        .setAllowedJobs(allowedJobs)
+                        .setBannedJobs(bannedJobs)
+                        .setExposeToNoQualify(body.getExposeToNoQualify())
+                        .setDescriptionLink(Cryptor.ENCRYPT(body.getDescriptionLink())));
+
+                String fileName = seller.get().getId()+"-"+productEdit.getId();
+                return Header.OK(transactionType,fileName,SessionApi.updateSession(request.getSession()));
+            }
+            else{
+                return Header.ERROR(transactionType,description.substring(0,description.length()-1),SessionApi.updateSession(request.getSession()));
+            }
+        }
     }
 
     public Header<ProductApiResponse> deleteProduct(String session, Long id) {
@@ -149,6 +295,10 @@ public class SellerProductLogicService {
                 .name(product.getName())
                 .cost(product.getCost())
                 .quantity(product.getQuantity())
+                .allowedGender(DtoConverter.stringToSetOfGender(product.getAllowedGender()))
+                .allowedMinimumAge(product.getAllowedMinimumAge())
+                .allowedMaximumAge(product.getAllowedMaximumAge())
+                .exposeToNoQualify(product.getExposeToNoQualify())
                 .profileImageName(Cryptor.DECRYPT(product.getProfileImageName()))
                 .descriptionLink(Cryptor.DECRYPT(product.getDescriptionLink()))
                 .build();
@@ -161,6 +311,16 @@ public class SellerProductLogicService {
             body.setReviews(new ArrayList<>());
             for(Review review : product.getReviews())
                 body.getReviews().add(ReviewApiLogicService.Body(review));
+        }
+        if(product.getAllowedJobs()!=null){
+            body.setAllowedJobs(new ArrayList<>());
+            for(Job job : product.getAllowedJobs())
+                body.getAllowedJobs().add(JobApiLogicService.Body(job));
+        }
+        if(product.getBannedJobs()!=null){
+            body.setBannedJobs(new ArrayList<>());
+            for(Job job : product.getBannedJobs())
+                body.getBannedJobs().add(JobApiLogicService.Body(job));
         }
         return body;
     }

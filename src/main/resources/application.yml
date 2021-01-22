@@ -21,3 +21,10 @@ credential:
     initial_vector: -@y(c6`V)vqAJc2%
   admin:
     admin_create_key: dare_not_touch_the_sun
+e-mail:
+  from: kigael16@naver.com
+  from-name: Getterz_Mail_Service
+  smtp-username: kigael16@naver.com
+  smtp-password: kenem-1257-
+  host: smtp.naver.com
+  port: 465
