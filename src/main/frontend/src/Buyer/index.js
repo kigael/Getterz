@@ -1,10 +1,10 @@
-import Gate from "./Gate";
-import Login from "./Login";
-import Purchase from "./Purchase";
-import Review from "./Review";
-import Search from "./Search";
-import Signup from "./Signup";
-import Manage from "./Manage";
-import VerifyEmail from "./VerifyEmail";
+import Gate from "./Gate/Gate";
+import Login from "./Login/Login";
+import Purchase from "./Purchase/Purchase";
+import Review from "./Review/Review";
+import Search from "./Search/Search";
+import Signup from "./Signup/Signup";
+import Manage from "./Manage/Manage";
+import VerifyEmail from "./VerifyEmail/VerifyEmail";
 
 export { Gate, Login, Purchase, Review, Search, Signup, Manage, VerifyEmail };
