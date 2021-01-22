@@ -6,7 +6,7 @@ build/
 !**/src/test/**/build/
 
 ### Sensitive Data ###
-src/main/resources/application.yml
+src/main/resources/
 upload/
 
 ### STS ###
