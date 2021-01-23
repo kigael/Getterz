@@ -18,11 +18,11 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
     value =
     "SELECT * " +
     "FROM PRODUCT " +
-    "WHERE allowed_gender LIKE CONCAT('%',:gender,'%') AND " +
+    "WHERE (allowed_gender LIKE CONCAT('%',:gender,'%') AND " +
     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
     "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
-    "expose_to_no_qualify AND " +
+    "expose_to_no_qualify) AND " +
     "LOWER(name) LIKE LOWER(CONCAT('%',:productName,'%')) AND " +
     "cost BETWEEN :minimumCost AND :maximumCost AND " +
     "(SELECT COUNT(*) FROM product_tags, tag WHERE id = product_id AND tags_id = tag.id AND LOWER(tag.name) REGEXP :tags) >= :numberOfTags"
@@ -42,11 +42,11 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
     value =
     "SELECT * " +
     "FROM PRODUCT " +
-    "WHERE allowed_gender LIKE CONCAT('%',:gender,'%') AND " +
+    "WHERE (allowed_gender LIKE CONCAT('%',:gender,'%') AND " +
     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
     "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
-    "expose_to_no_qualify AND " +
+    "expose_to_no_qualify) AND " +
     "LOWER(name) LIKE LOWER(CONCAT('%',:productName,'%')) AND " +
     "cost BETWEEN :minimumCost AND :maximumCost AND " +
     "(SELECT COUNT(*) FROM product_tags, tag WHERE id = product_id AND tags_id = tag.id AND LOWER(tag.name) REGEXP :tags) >= :numberOfTags" +
@@ -69,11 +69,11 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
     value =
     "SELECT * " +
     "FROM PRODUCT " +
-    "WHERE allowed_gender LIKE CONCAT('%',:gender,'%') AND " +
+    "WHERE (allowed_gender LIKE CONCAT('%',:gender,'%') AND " +
     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
     "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
-    "expose_to_no_qualify AND " +
+    "expose_to_no_qualify) AND " +
     "LOWER(name) LIKE LOWER(CONCAT('%',:productName,'%')) AND " +
     "cost BETWEEN :minimumCost AND :maximumCost AND " +
     "(SELECT COUNT(*) FROM product_tags, tag WHERE id = product_id AND tags_id = tag.id AND LOWER(tag.name) REGEXP :tags) >= :numberOfTags" +
@@ -96,11 +96,11 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
     value =
     "SELECT * " +
     "FROM PRODUCT " +
-    "WHERE allowed_gender LIKE CONCAT('%',:gender,'%') AND " +
+    "WHERE (allowed_gender LIKE CONCAT('%',:gender,'%') AND " +
     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
     "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
-    "expose_to_no_qualify AND " +
+    "expose_to_no_qualify) AND " +
     "LOWER(name) LIKE LOWER(CONCAT('%',:productName,'%')) AND " +
     "cost BETWEEN :minimumCost AND :maximumCost AND " +
     "(SELECT COUNT(*) FROM product_tags, tag WHERE id = product_id AND tags_id = tag.id AND LOWER(tag.name) REGEXP :tags) >= :numberOfTags" +
@@ -121,11 +121,11 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
     value =
     "SELECT * " +
     "FROM PRODUCT " +
-    "WHERE allowed_gender LIKE CONCAT('%',:gender,'%') AND " +
+    "WHERE (allowed_gender LIKE CONCAT('%',:gender,'%') AND " +
     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
     "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
-    "expose_to_no_qualify AND " +
+    "expose_to_no_qualify) AND " +
     "LOWER(name) LIKE LOWER(CONCAT('%',:productName,'%')) AND " +
     "cost BETWEEN :minimumCost AND :maximumCost AND " +
     "(SELECT COUNT(*) FROM product_tags, tag WHERE id = product_id AND tags_id = tag.id AND LOWER(tag.name) REGEXP :tags) >= :numberOfTags" +
@@ -146,11 +146,11 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
     value =
     "SELECT * " +
     "FROM PRODUCT " +
-    "WHERE allowed_gender LIKE CONCAT('%',:gender,'%') AND " +
+    "WHERE (allowed_gender LIKE CONCAT('%',:gender,'%') AND " +
     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
     "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
-    "expose_to_no_qualify AND " +
+    "expose_to_no_qualify) AND " +
     "LOWER(name) LIKE LOWER(CONCAT('%',:productName,'%')) AND " +
     "cost BETWEEN :minimumCost AND :maximumCost AND " +
     "(SELECT COUNT(*) FROM product_tags, tag WHERE id = product_id AND tags_id = tag.id AND LOWER(tag.name) REGEXP :tags) >= :numberOfTags" +
@@ -171,11 +171,11 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
     value =
     "SELECT * " +
     "FROM PRODUCT " +
-    "WHERE allowed_gender LIKE CONCAT('%',:gender,'%') AND " +
+    "WHERE (allowed_gender LIKE CONCAT('%',:gender,'%') AND " +
     ":age BETWEEN allowed_minimum_age AND allowed_maximum_age AND " +
     "((SELECT COUNT(*) FROM product_allowed_jobs WHERE product_id = id AND allowed_jobs_id IN :jobs) > 0 OR " +
     "(SELECT COUNT(*) FROM product_banned_jobs WHERE product_id = id AND banned_jobs_id IN :jobs) = 0) OR " +
-    "expose_to_no_qualify AND " +
+    "expose_to_no_qualify) AND " +
     "LOWER(name) LIKE LOWER(CONCAT('%',:productName,'%')) AND " +
     "cost BETWEEN :minimumCost AND :maximumCost AND " +
     "(SELECT COUNT(*) FROM product_tags, tag WHERE id = product_id AND tags_id = tag.id AND LOWER(tag.name) REGEXP :tags) >= :numberOfTags" +

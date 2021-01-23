@@ -1,23 +1,21 @@
 import React, { useState } from "react";
+import axios from "axios";
+import { useDispatch } from "react-redux";
+import { buyerLoading, buyerDone } from "../../info/BuyerInfo";
 import {
   Grid,
   TextField,
-  Typography,
   Chip,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
-  Card,
-  CardMedia,
-  CardContent,
-  CardActions,
   Button,
 } from "@material-ui/core";
 import NumberFormat from "react-number-format";
 import { makeStyles } from "@material-ui/core/styles";
 import Pagination from "@material-ui/lab/Pagination";
-import { ProductCard, EmptyCard } from "./Card";
+import { ProductCard, EmptyCard } from "../Card";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -126,6 +124,7 @@ function NumberFormatCustom(props) {
 
 export default function SearchBody(props) {
   const classes = useStyles();
+  const [called, setCalled] = useState(false);
   const session = props.session;
   const [pagenate, setPagenate] = useState({
     page: 1,
@@ -139,6 +138,10 @@ export default function SearchBody(props) {
     SearchProducts();
   };
   const { page, totalCount } = pagenate;
+  const [productName, setProductName] = useState("");
+  const onProductNameChange = (e) => {
+    setProductName(e.target.value);
+  };
   const [products, setProducts] = useState([]);
   const [tag, setTag] = useState("");
   const onTagChange = (e) => {
@@ -154,7 +157,7 @@ export default function SearchBody(props) {
   const handleTagDelete = (tagToDelete) => () => {
     setTagList((tags) => tags.filter((tag) => tag.name !== tagToDelete.name));
   };
-  const [sort, setSort] = useState("");
+  const [sort, setSort] = useState("DO_NOT_ORDER");
   const [openSort, setOpenSort] = useState(false);
   const onSortChange = (e) => {
     setSort(e.target.value);
@@ -165,7 +168,63 @@ export default function SearchBody(props) {
   const onSortOpen = () => {
     setOpenSort(true);
   };
-  const SearchProducts = async () => {};
+  const [minimumCost, setMinimumCost] = useState("");
+  const onMinimumCostChange = (e) => {
+    setMinimumCost(e.target.value);
+  };
+  const [maximumCost, setMaximumCost] = useState("");
+  const onMaximumCostChange = (e) => {
+    setMaximumCost(e.target.value);
+  };
+  const init = () => {
+    for (let i = 0; i < 8; i++) {
+      setProducts((products) => [...products, null]);
+    }
+  };
+  if (!called) {
+    setCalled(true);
+    init();
+  }
+  const dispatch = useDispatch();
+  const loading = () => dispatch(buyerLoading());
+  const done = () => dispatch(buyerDone());
+  const SearchProducts = async () => {
+    loading();
+    await axios
+      .get("/buyer/search", {
+        params: {
+          productName: productName,
+          minimumCost: isNaN(parseFloat(minimumCost))
+            ? ""
+            : parseFloat(minimumCost),
+          maximumCost: isNaN(parseFloat(maximumCost))
+            ? ""
+            : parseFloat(maximumCost),
+          tags: tagList.length > 0 ? tagList.map((t) => t.name) : "",
+          orderByType: sort,
+          getterz_session: props.session,
+          page: pagenate.page - 1,
+          size: 8,
+        },
+      })
+      .then(function (response) {
+        if (response.data.resultCode === "OK") {
+          setProducts(response.data.data.products);
+          for (let i = response.data.data.products.length; i < 8; i++) {
+            setProducts((products) => [...products, null]);
+          }
+          setPagenate({
+            ...pagenate,
+            page: response.data.currentPage + 1,
+            totalCount: response.data.totalPage,
+          });
+        }
+        done();
+      })
+      .catch(function (error) {
+        done();
+      });
+  };
   return (
     <>
       <Grid
@@ -181,6 +240,9 @@ export default function SearchBody(props) {
             className={classes.input}
             InputLabelProps={{ shrink: true, style: { color: "white" } }}
             id="productName"
+            name="productName"
+            value={productName}
+            onChange={onProductNameChange}
             label="Product name"
             style={{ margin: 8 }}
             fullWidth
@@ -212,6 +274,8 @@ export default function SearchBody(props) {
             InputLabelProps={{ style: { color: "white" } }}
             label="Minimum cost"
             name="minimumCost"
+            value={minimumCost}
+            onChange={onMinimumCostChange}
             id="minimumCost"
             size="small"
             InputProps={{ inputComponent: NumberFormatCustom }}
@@ -223,6 +287,8 @@ export default function SearchBody(props) {
             InputLabelProps={{ style: { color: "white" } }}
             label="Maximum cost"
             name="maximumCost"
+            value={maximumCost}
+            onChange={onMaximumCostChange}
             id="maximumCost"
             size="small"
             InputProps={{ inputComponent: NumberFormatCustom }}
@@ -263,13 +329,13 @@ export default function SearchBody(props) {
               value={sort}
               onChange={onSortChange}
             >
-              <MenuItem value={""}>Don't sort</MenuItem>
+              <MenuItem value={"DO_NOT_ORDER"}>Don't sort</MenuItem>
               <MenuItem value={"ORDER_BY_DISTANCE_ASC"}>Nearest</MenuItem>
               <MenuItem value={"ORDER_BY_DISTANCE_DESC"}>Farthest</MenuItem>
               <MenuItem value={"ORDER_BY_COST_ASC"}>Low-priced</MenuItem>
               <MenuItem value={"ORDER_BY_COST_DESC"}>High-priced</MenuItem>
-              <MenuItem value={"ORDER_BY_REVIEW_ASC"}>Most-reviewed</MenuItem>
-              <MenuItem value={"ORDER_BY_REVIEW_DESC"}>Least-reviewed</MenuItem>
+              <MenuItem value={"ORDER_BY_REVIEW_ASC"}>Least-reviewed</MenuItem>
+              <MenuItem value={"ORDER_BY_REVIEW_DESC"}>Most-reviewed</MenuItem>
             </Select>
           </FormControl>
         </Grid>
@@ -278,6 +344,7 @@ export default function SearchBody(props) {
           variant="contained"
           color="primary"
           className={classes.submit}
+          onClick={SearchProducts}
         >
           SEARCH
         </Button>

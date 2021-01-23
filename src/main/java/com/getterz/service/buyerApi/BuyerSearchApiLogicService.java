@@ -112,7 +112,7 @@ public class BuyerSearchApiLogicService {
         StringBuilder ret = new StringBuilder();
         for(String t : tagSet)
             ret.append(t).append("|");
-        return ret.substring(0,ret.length()-1);
+        return ret.length()>0 ? ret.substring(0,ret.length()-1) : "";
     }
 
     public Header<ProductApiResponse> read(Long productId, String session) {
