@@ -17,7 +17,7 @@ function Search() {
   return (
     <>
       <BuyerHeadBar />
-      <BuyerBodyPaper Body={<SearchBody />} />
+      <BuyerBodyPaper Body={<SearchBody session={header.session} />} />
       <BuyerFootBar />
     </>
   );

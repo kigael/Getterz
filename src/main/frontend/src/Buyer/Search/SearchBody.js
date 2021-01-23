@@ -17,6 +17,7 @@ import {
 import NumberFormat from "react-number-format";
 import { makeStyles } from "@material-ui/core/styles";
 import Pagination from "@material-ui/lab/Pagination";
+import { ProductCard, EmptyCard } from "./Card";
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -123,114 +124,22 @@ function NumberFormatCustom(props) {
   );
 }
 
-function DummyItem() {
+export default function SearchBody(props) {
   const classes = useStyles();
-  return (
-    <Grid item xs={3}>
-      <Card className={classes.card}>
-        <CardMedia className={classes.cardMedia} />
-        <CardContent className={classes.cardContent}>
-          <Typography
-            gutterBottom
-            variant="h5"
-            component="h2"
-            style={{ color: "white", backgroundColor: "white" }}
-          >
-            EMPTY
-          </Typography>
-          <Typography style={{ color: "white", backgroundColor: "white" }}>
-            EMPTY
-          </Typography>
-        </CardContent>
-        <CardActions>
-          <Button
-            style={{ color: "white", backgroundColor: "white" }}
-            size="small"
-            disabled
-          >
-            EMPTY
-          </Button>
-          <Button
-            style={{ color: "white", backgroundColor: "white" }}
-            size="small"
-            disabled
-          >
-            EMPTY
-          </Button>
-        </CardActions>
-      </Card>
-    </Grid>
-  );
-}
-
-export default function SearchBody() {
-  const classes = useStyles();
-  const [products, setProducts] = useState([
-    {
-      id: null,
-      name: "",
-      cost: null,
-      tags: [],
-      quantity: null,
-      profileImageName: "",
-    },
-    {
-      id: null,
-      name: "",
-      cost: null,
-      tags: [],
-      quantity: null,
-      profileImageName: "",
-    },
-    {
-      id: null,
-      name: "",
-      cost: null,
-      tags: [],
-      quantity: null,
-      profileImageName: "",
-    },
-    {
-      id: null,
-      name: "",
-      cost: null,
-      tags: [],
-      quantity: null,
-      profileImageName: "",
-    },
-    {
-      id: null,
-      name: "",
-      cost: null,
-      tags: [],
-      quantity: null,
-      profileImageName: "",
-    },
-    {
-      id: null,
-      name: "",
-      cost: null,
-      tags: [],
-      quantity: null,
-      profileImageName: "",
-    },
-    {
-      id: null,
-      name: "",
-      cost: null,
-      tags: [],
-      quantity: null,
-      profileImageName: "",
-    },
-    {
-      id: null,
-      name: "",
-      cost: null,
-      tags: [],
-      quantity: null,
-      profileImageName: "",
-    },
-  ]);
+  const session = props.session;
+  const [pagenate, setPagenate] = useState({
+    page: 1,
+    totalCount: 1,
+  });
+  const onPageChange = (event, page) => {
+    setPagenate({
+      ...pagenate,
+      page: page,
+    });
+    SearchProducts();
+  };
+  const { page, totalCount } = pagenate;
+  const [products, setProducts] = useState([]);
   const [tag, setTag] = useState("");
   const onTagChange = (e) => {
     setTag(e.target.value);
@@ -245,7 +154,7 @@ export default function SearchBody() {
   const handleTagDelete = (tagToDelete) => () => {
     setTagList((tags) => tags.filter((tag) => tag.name !== tagToDelete.name));
   };
-  const [sort, setSort] = useState(null);
+  const [sort, setSort] = useState("");
   const [openSort, setOpenSort] = useState(false);
   const onSortChange = (e) => {
     setSort(e.target.value);
@@ -256,6 +165,7 @@ export default function SearchBody() {
   const onSortOpen = () => {
     setOpenSort(true);
   };
+  const SearchProducts = async () => {};
   return (
     <>
       <Grid
@@ -353,7 +263,7 @@ export default function SearchBody() {
               value={sort}
               onChange={onSortChange}
             >
-              <MenuItem value={null}>Don't sort</MenuItem>
+              <MenuItem value={""}>Don't sort</MenuItem>
               <MenuItem value={"ORDER_BY_DISTANCE_ASC"}>Nearest</MenuItem>
               <MenuItem value={"ORDER_BY_DISTANCE_DESC"}>Farthest</MenuItem>
               <MenuItem value={"ORDER_BY_COST_ASC"}>Low-priced</MenuItem>
@@ -375,41 +285,23 @@ export default function SearchBody() {
       <Pagination
         className={classes.pageNavi}
         defaultPage={1}
-        page={1}
-        count={10}
+        page={page}
+        count={totalCount}
+        onChange={onPageChange}
         shape="rounded"
-        color="primary"
       />
       <Grid container className={classes.cardGrid} spacing={2} xs={10}>
         {products.map((product) => {
-          if (product.id) {
+          if (product) {
             return (
-              <Grid item key={product} xs={3}>
-                <Card className={classes.card}>
-                  <CardMedia
-                    className={classes.cardMedia}
-                    image={product.profileImageName}
-                    title={product.name}
-                  />
-                  <CardContent className={classes.cardContent}>
-                    <Typography gutterBottom variant="h5" component="h2">
-                      {product.name}
-                    </Typography>
-                    <Typography>${product.cost}</Typography>
-                  </CardContent>
-                  <CardActions>
-                    <Button size="small" color="primary">
-                      View
-                    </Button>
-                    <Button size="small" color="primary">
-                      Purchase
-                    </Button>
-                  </CardActions>
-                </Card>
-              </Grid>
+              <ProductCard
+                product={product}
+                session={session}
+                refresh={SearchProducts}
+              />
             );
           } else {
-            return DummyItem();
+            return <EmptyCard />;
           }
         })}
       </Grid>
