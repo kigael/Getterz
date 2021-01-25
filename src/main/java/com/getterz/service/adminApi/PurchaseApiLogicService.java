@@ -58,7 +58,7 @@ public class PurchaseApiLogicService extends CrudService<PurchaseApiRequest, Pur
                 description.append("NO QUANTITY\n");
                 isGreen=Boolean.FALSE;
             }
-            if(body.getTotalCost()==null){
+            if(body.getTotalSatoshi()==null){
                 description.append("NO TOTAL COST\n");
                 isGreen=Boolean.FALSE;
             }
@@ -78,7 +78,7 @@ public class PurchaseApiLogicService extends CrudService<PurchaseApiRequest, Pur
 
                 if(body.getQuantity()<=0) return Header.ERROR(transactionType,"INVALID QUANTITY",SessionApi.updateSession(request.getSession()));
 
-                if(body.getTotalCost().compareTo(BigDecimal.ZERO)<0) Header.ERROR(transactionType,"INVALID TOTAL COST",SessionApi.updateSession(request.getSession()));
+                if(body.getTotalSatoshi()<0) Header.ERROR(transactionType,"INVALID TOTAL COST",SessionApi.updateSession(request.getSession()));
                 
                 return Header.OK(
                         transactionType,
@@ -87,7 +87,7 @@ public class PurchaseApiLogicService extends CrudService<PurchaseApiRequest, Pur
                         .buyer(buyer.get())
                         .product(product.get())
                         .quantity(body.getQuantity())
-                        .totalCost(body.getTotalCost())
+                        .totalSatoshi(body.getTotalSatoshi())
                         .deliverMethod(body.getDeliverMethod())
                         .purchaseState(PurchaseState.PREPARING)
                         .wroteReview(Boolean.FALSE)
@@ -156,7 +156,7 @@ public class PurchaseApiLogicService extends CrudService<PurchaseApiRequest, Pur
                 description.append("NO QUANTITY\n");
                 isGreen=Boolean.FALSE;
             }
-            if(body.getTotalCost()==null){
+            if(body.getTotalSatoshi()==null){
                 description.append("NO TOTAL COST\n");
                 isGreen=Boolean.FALSE;
             }
@@ -199,7 +199,7 @@ public class PurchaseApiLogicService extends CrudService<PurchaseApiRequest, Pur
 
                 if(body.getQuantity()<=0) return Header.ERROR(transactionType,"QUANTITY INCORRECT",SessionApi.updateSession(request.getSession()));
 
-                if(body.getTotalCost().compareTo(BigDecimal.ZERO)<0) Header.ERROR(transactionType,"TOTAL COST INCORRECT",SessionApi.updateSession(request.getSession()));
+                if(body.getTotalSatoshi()<0) Header.ERROR(transactionType,"TOTAL COST INCORRECT",SessionApi.updateSession(request.getSession()));
                 
                 return Header.OK(
                         transactionType,
@@ -208,7 +208,7 @@ public class PurchaseApiLogicService extends CrudService<PurchaseApiRequest, Pur
                         .setBuyer(buyer.get())
                         .setProduct(product.get())
                         .setQuantity(body.getQuantity())
-                        .setTotalCost(body.getTotalCost())
+                        .setTotalSatoshi(body.getTotalSatoshi())
                         .setDeliverMethod(body.getDeliverMethod())
                         .setPurchaseState(body.getPurchaseState())
                         .setArrivalDateTime(Optional.ofNullable(body.getArrivalDateTime()).orElse(null))
@@ -253,7 +253,7 @@ public class PurchaseApiLogicService extends CrudService<PurchaseApiRequest, Pur
         PurchaseApiResponse body = PurchaseApiResponse.builder()
                 .id(purchase.getId())
                 .quantity(purchase.getQuantity())
-                .totalCost(purchase.getTotalCost())
+                .totalSatoshi(purchase.getTotalSatoshi())
                 .deliverMethod(purchase.getDeliverMethod())
                 .purchaseState(purchase.getPurchaseState())
                 .purchaseDateTime(purchase.getPurchaseDateTime())
@@ -272,7 +272,7 @@ public class PurchaseApiLogicService extends CrudService<PurchaseApiRequest, Pur
         return PurchaseApiResponse.builder()
                 .id(purchase.getId())
                 .quantity(purchase.getQuantity())
-                .totalCost(purchase.getTotalCost())
+                .totalSatoshi(purchase.getTotalSatoshi())
                 .deliverMethod(purchase.getDeliverMethod())
                 .purchaseState(purchase.getPurchaseState())
                 .purchaseDateTime(purchase.getPurchaseDateTime())

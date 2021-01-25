@@ -3,10 +3,17 @@ package com.getterz.bitcoin;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.bitcoinj.core.Coin;
-import org.bitcoinj.core.NetworkParameters;
-import org.bitcoinj.core.Transaction;
-import org.bitcoinj.core.TransactionOutput;
+import com.getterz.crypt.Cryptor;
+import com.getterz.domain.enumclass.PurchaseState;
+import com.getterz.domain.model.Buyer;
+import com.getterz.domain.model.Purchase;
+import com.getterz.domain.model.Seller;
+import com.getterz.domain.repository.BuyerRepository;
+import com.getterz.domain.repository.PurchaseRepository;
+import com.getterz.domain.repository.SellerRepository;
+import com.getterz.mail.GetterzMailService;
+import lombok.RequiredArgsConstructor;
+import org.bitcoinj.core.*;
 import org.bitcoinj.kits.WalletAppKit;
 import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.params.RegTestParams;
@@ -15,43 +22,51 @@ import org.bitcoinj.script.Script;
 import org.bitcoinj.wallet.Wallet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.io.*;
-import java.math.BigDecimal;
 import java.net.URL;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
-@Service
+@Component
+@RequiredArgsConstructor
 public class BCWalletService {
 
     @Autowired
-    private Environment env;
+    private final Environment env;
+    private final GetterzMailService getterzMailService;
+    private final PurchaseRepository purchaseRepository;
+    private final SellerRepository sellerRepository;
+    private final BuyerRepository buyerRepository;
 
     private NetworkParameters params;
-    private String filePrefix;
     private WalletAppKit kit;
-    private String baseDir = System.getProperty("user.dir")+"/bcw/";
+    private final String baseDir = System.getProperty("user.dir")+"/bcw/";
+    private Address getterzWalletAddress;
 
     @PostConstruct
     private void init(){
         String mode = env.getProperty("bcwallet.mode");
-        if (mode.equals("testnet")) {
-            params = TestNet3Params.get();
-            filePrefix = "Getterz-BitCoinWallet-testnet";
-        }
-        else if (mode.equals("regtest")) {
-            params = RegTestParams.get();
-            filePrefix = "Getterz-BitCoinWallet-regtest";
-        }
-        else if(mode.equals("mainnet")){
-            params = MainNetParams.get();
-            filePrefix = "Getterz-BitCoinWallet-product";
-        }
-        else{
-            System.err.println("Please set the bcwallet mode: [regtest|testnet|mainnet]");
-            return;
+        String filePrefix;
+        switch (mode) {
+            case "testnet" -> {
+                params = TestNet3Params.get();
+                filePrefix = "Getterz-BitCoinWallet-testnet";
+            }
+            case "regtest" -> {
+                params = RegTestParams.get();
+                filePrefix = "Getterz-BitCoinWallet-regtest";
+            }
+            case "mainnet" -> {
+                params = MainNetParams.get();
+                filePrefix = "Getterz-BitCoinWallet-product";
+            }
+            default -> {
+                System.err.println("Please set the bcwallet mode: [regtest|testnet|mainnet]");
+                return;
+            }
         }
         kit = new WalletAppKit(params, new File(baseDir), filePrefix);
         if (params == RegTestParams.get()) {
@@ -60,30 +75,74 @@ public class BCWalletService {
         kit.setAutoSave(true);
         kit.startAsync();
         kit.awaitRunning();
+        getterzWalletAddress = kit.wallet().currentReceiveAddress();
         kit.wallet().addCoinsReceivedEventListener(this::onReceived);
     }
 
+    public Address getGetterzWalletAddress(){
+        return this.getterzWalletAddress;
+    }
+
     private void onReceived(Wallet w, Transaction tx, Coin prevBalance, Coin newBalance) {
-        //Get sender's address
         String sender = "";
         for (TransactionOutput txo : tx.getOutputs()){
             Script txoScript = txo.getScriptPubKey();
             sender = txoScript.getToAddress(params).toString();
         }
-        //Get memo of transaction
         String certMemo = tx.getMemo();
-        //Get value of sent coin
         Coin value = tx.getValueSentToMe(w);
-        //Get exchange rate of bitcoin
-        Rate rate = toRate(readJsonFromUrl("https://bitpay.com/api/rates/usd"));
-        //Get usd amount of transaction based on ratio
-        BigDecimal usd = BigDecimal.valueOf(0.00000001 * (double) value.getValue() * rate.getRate());
-        //Verify certMemo and usd
+        try{
+            String cert = Cryptor.DECRYPT(certMemo);
+            String[] tokens = cert.split("\\+");
+            Long purchaseId = Long.parseLong(tokens[0]);
+            Long sellerId = Long.parseLong(tokens[1]);
+            Long buyerId = Long.parseLong(tokens[2]);
+            Optional<Purchase> purchase = purchaseRepository.findById(purchaseId);
+            Optional<Seller> seller = sellerRepository.findById(sellerId);
+            Optional<Buyer> buyer = buyerRepository.findById(buyerId);
+            if(purchase.isEmpty()||seller.isEmpty()||buyer.isEmpty())  throw new Exception();
+            else if(!purchase.get().getSeller().getId().equals(seller.get().getId())) throw new Exception();
+            else if(!purchase.get().getBuyer().getId().equals(buyer.get().getId())) throw new Exception();
+            else if(!purchase.get().getTotalSatoshi().equals(value.getValue())) throw new Exception();
+            else{
+                String sellerEmailAddress = Cryptor.DECRYPT(seller.get().getEmailAddress());
+                String buyerEmailAddress = Cryptor.DECRYPT(buyer.get().getEmailAddress());
+                purchaseRepository.save(purchase.get().setPurchaseState(PurchaseState.PREPARING));
+                getterzMailService.sendSellerPaymentConfirmationMessage(sellerEmailAddress,purchase.get());
+                getterzMailService.sendBuyerPaymentConfirmationMessage(buyerEmailAddress,purchase.get());
+            }
+        }catch(Exception e){
+            returnCoins(sender,value);
+        }
+    }
 
-        //If certMemo is valid proceed purchase
+    private void returnCoins(String returningAddressStr, Coin value) {
+        try {
+            Address returningAddress = LegacyAddress.fromBase58(params, returningAddressStr);
+            kit.wallet().sendCoins(kit.peerGroup(), returningAddress, value);
+        } catch (InsufficientMoneyException e) {
+            System.err.println("Returning bitcoin failed.");
+        }
+    }
 
-        //If certMemo isn't valid return coin
+    public static Rate getRealTimeRate(){
+        try{
+            return new ObjectMapper().registerModule(new JavaTimeModule()).readValue(readJsonFromUrl("https://bitpay.com/api/rates/usd"),Rate.class);
+        }catch (JsonProcessingException e){
+            return null;
+        }
+    }
 
+    public static String readJsonFromUrl(String url) {
+        try {
+            InputStream is = new URL(url).openStream();
+            BufferedReader rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+            String jsonText = readAll(rd);
+            is.close();
+            return jsonText;
+        } catch(Exception e) {
+            return null;
+        }
     }
 
     private static String readAll(Reader rd) throws IOException {
@@ -93,27 +152,6 @@ public class BCWalletService {
             sb.append((char) cp);
         }
         return sb.toString();
-    }
-
-    public static String readJsonFromUrl(String url) {
-        try {
-            InputStream is = new URL(url).openStream();
-            BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
-            String jsonText = readAll(rd);
-            is.close();
-            return jsonText;
-        } catch(Exception e) {
-            return null;
-        }
-    }
-
-    public static Rate toRate(String json) {
-        try{
-            return new ObjectMapper().registerModule(new JavaTimeModule()).readValue(json,Rate.class);
-        }catch (JsonProcessingException e){
-            e.printStackTrace();
-            return null;
-        }
     }
 
 }

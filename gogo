@@ -1,5 +1,7 @@
 #!/bin/zsh
-
+#stop running gradle daemon
+./gradlew --stop
+#build jar from source
 ./gradlew bootJar
-
+#run compiled jar file
 java -jar ./build/libs/*

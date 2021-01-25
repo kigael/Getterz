@@ -1,5 +1,6 @@
 package com.getterz.mail;
 
+import com.getterz.domain.model.Purchase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -132,6 +133,14 @@ public class GetterzMailService {
         } finally {
             transport.close();
         }
+    }
+
+    public void sendSellerPaymentConfirmationMessage(String emailAddress, Purchase purchase){
+        //TODO: write code
+    }
+
+    public void sendBuyerPaymentConfirmationMessage(String emailAddress, Purchase purchase){
+        //TODO: write code
     }
 
 }

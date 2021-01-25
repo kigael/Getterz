@@ -36,7 +36,7 @@ public class Purchase {
 
     private Long quantity;
 
-    private BigDecimal totalCost;
+    private Long totalSatoshi;               // TODO: handle this real time
 
     @Enumerated(EnumType.STRING)
     private DeliverMethod deliverMethod;

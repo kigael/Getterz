@@ -315,7 +315,7 @@ public class BuyerPurchaseApiLogicService {
                 description.append("NO QUANTITY\n");
                 isGreen=Boolean.FALSE;
             }
-            if(body.getTotalCost()==null){
+            if(body.getTotalSatoshi()==null){
                 description.append("NO TOTAL COST\n");
                 isGreen=Boolean.FALSE;
             }
@@ -336,7 +336,7 @@ public class BuyerPurchaseApiLogicService {
 
                 if(body.getQuantity()<=0) return Header.ERROR(transactionType,"INVALID QUANTITY",SessionApi.updateSession(request.getSession()));
 
-                if(body.getTotalCost().compareTo(BigDecimal.ZERO)<0) Header.ERROR(transactionType,"INVALID TOTAL COST",SessionApi.updateSession(request.getSession()));
+                if(body.getTotalSatoshi()<0) Header.ERROR(transactionType,"INVALID TOTAL COST",SessionApi.updateSession(request.getSession()));
 
                 return Header.OK(
                         transactionType,
@@ -345,7 +345,7 @@ public class BuyerPurchaseApiLogicService {
                                 .buyer(buyer.get())
                                 .product(product.get())
                                 .quantity(body.getQuantity())
-                                .totalCost(body.getTotalCost())
+                                .totalSatoshi(body.getTotalSatoshi())
                                 .deliverMethod(body.getDeliverMethod())
                                 .purchaseState(PurchaseState.PREPARING)
                                 .wroteReview(Boolean.FALSE)
@@ -396,7 +396,7 @@ public class BuyerPurchaseApiLogicService {
         PurchaseApiResponse body = PurchaseApiResponse.builder()
                 .id(purchase.getId())
                 .quantity(purchase.getQuantity())
-                .totalCost(purchase.getTotalCost())
+                .totalSatoshi(purchase.getTotalSatoshi())
                 .deliverMethod(purchase.getDeliverMethod())
                 .purchaseState(purchase.getPurchaseState())
                 .purchaseDateTime(purchase.getPurchaseDateTime())

@@ -26,7 +26,7 @@ public class PurchaseApiRequest {
 
     private Long quantity;
 
-    private BigDecimal totalCost;
+    private Long totalSatoshi;
 
     private DeliverMethod deliverMethod;
 
